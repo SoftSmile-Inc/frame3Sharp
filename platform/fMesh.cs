@@ -20,6 +20,10 @@ namespace f3
             mesh = m;
         }
 
+        public static fMesh CreateBigMesh(DMesh3 source)
+        {
+            return UnityUtil.DMeshToUnityMesh(source, false, bAllowLargeMeshes: true);
+        }
 
         public fMesh(DMesh3 source)
         {
