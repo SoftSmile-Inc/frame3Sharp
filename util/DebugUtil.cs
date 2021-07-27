@@ -250,7 +250,7 @@ namespace f3
                 ThreadMailbox.PostToMainThread(() => { DebugUtil.EmitDebugMesh(name, mesh, color, parent, bIsInWorldPos); });
                 return null;
             }
-            fMeshGameObject fMeshGO = GameObjectFactory.CreateMeshGO(name, new fMesh(mesh), false, true);
+            fMeshGameObject fMeshGO = GameObjectFactory.CreateMeshGO(name, new fMesh(mesh, bAllowLargeMeshes: true), false, true);
             fMeshGO.SetMaterial(MaterialUtil.CreateStandardMaterialF(color));
             if (parent != null)
                 parent.AddChild(fMeshGO, bIsInWorldPos);

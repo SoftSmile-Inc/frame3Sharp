@@ -47,7 +47,14 @@ namespace f3
             lock(Directory) {
                 Mailbox box = _locked_get_mailbox(threadName);
                 foreach (var a in box.PendingActions)
-                    a();
+                    try
+                    {
+                        a();
+                    }
+                    catch (Exception e)
+                    {
+                        UnityEngine.Debug.LogException(e);
+                    }
                 box.PendingActions.Clear();
             }
         }
