@@ -254,7 +254,7 @@ namespace f3
             }
             if (mesh is null)
                 throw new Exception("Mesh is null");
-            fMeshGameObject fMeshGO = GameObjectFactory.CreateMeshGO(name, fMesh.CreateBigMesh(mesh), false, true);
+            fMeshGameObject fMeshGO = GameObjectFactory.CreateMeshGO(name, new fMesh(mesh, bAllowLargeMeshes: true), false, true);
             fMeshGO.SetMaterial(MaterialUtil.CreateStandardMaterialF(color));
             if (parent != null)
                 parent.AddChild(fMeshGO, bIsInWorldPos);
