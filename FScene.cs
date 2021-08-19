@@ -573,6 +573,16 @@ namespace f3
 			return false;
 		}
 
+		// in case of reusing scene objects we need to detach it from FScene so we can safely FScene.Reset() 
+        public void Detach(SceneObject so)
+        {
+            Deselect(so);
+            so.RootGameObject?.SetParent(null);
+            so.SetScene(null);
+            vDeleted.Remove(so);
+            vObjects.Remove(so);
+        }
+
 		public void Deselect(SceneObject s)
         {
             // [RMS] prevent selection changes if tool manager requests. Perhaps should
