@@ -14,7 +14,26 @@ namespace f3
 
         SceneObject Target { get; }
     }
+    
+    /// <summary>
+    /// Target Wrapper for cases when the number of targets is greater than one.
+    /// </summary>
+    public interface IMultipleTransformWrapper : ITransformable
+    {
+        void BeginTransformation();
 
+        // returns true if changes were emitted
+        bool DoneTransformation(bool bEmitChange);
+
+        IEnumerable<SceneObject> Targets { get; }
+        
+        /// <summary>
+        /// We do not have direct access to RootGameObject, neither we can make assumptions
+        /// about whether we can use one of the targets -- so we ask those who implement the interface to provide an appropriate event handler 
+        /// </summary>
+        event TransformChangedEventHandler OnTransformModified;
+    }
+    
     public abstract class BaseTransformWrapper : ITransformWrapper
     {
         abstract public bool SupportsScaling { get; }
