@@ -47,7 +47,8 @@ namespace f3
 
         public const string NoGizmoType = "no_gizmo";
         public const string DefaultGizmoType = "default";
-        
+        private const int MaxGizmoOverridesCount = 10;
+
         private ITransformGizmoBuilder _activeBuilder;
         private ITransformGizmo _activeGizmo;
 
@@ -114,7 +115,7 @@ namespace f3
         {
             if (_sActiveGizmoType == sType)
                 return;
-            if (_gizmoTypes.ContainsKey(sType) == false)
+            if (!_gizmoTypes.ContainsKey(sType))
                 throw new ArgumentException("TransformManager.SetActiveGizmoType : type " + sType + " is not registered!");
 
             _activeBuilder = _gizmoTypes[sType];
@@ -129,9 +130,9 @@ namespace f3
         /// </summary>
         public void PushOverrideGizmoType(string sType)
         {
-            if (_gizmoTypes.ContainsKey(sType) == false)
+            if (!_gizmoTypes.ContainsKey(sType))
                 throw new ArgumentException("TransformManager.SetOverrideGizmoType : type " + sType + " is not registered!");
-            if (_overrideGizmoStack.Count > 10)
+            if (_overrideGizmoStack.Count > MaxGizmoOverridesCount)
                 throw new Exception("TransformManager.PushOverrideGizmoType: stack is too large, probably a missing pop?");
 
             _overrideGizmoStack.Add(this._sOverrideGizmoType);
@@ -227,7 +228,7 @@ namespace f3
         protected virtual void SendOnActiveGizmoModified()
         {
             EventHandler tmp = OnActiveGizmoModified;
-            tmp?.Invoke(this, new EventArgs());
+            tmp?.Invoke(this, EventArgs.Empty);
         }
 
         public FrameType ActiveFrameType
@@ -271,7 +272,7 @@ namespace f3
             FScene scene = Context.Scene;
             if (_activeGizmo != null)
             {
-                scene.RemoveUIElement(_activeGizmo, true);
+                scene.RemoveUIElement(_activeGizmo, bDestroy: true);
                 _activeGizmo = null;
                 SendOnActiveGizmoModified();
             }
@@ -286,7 +287,7 @@ namespace f3
             // filter target count if builder only supports single object
             List<SceneObject> useTargets = new List<SceneObject>(targets);
             
-            if (useTargets.Count > 0 && gizmoBuilderToUse.SupportsMultipleObjects == false)
+            if (useTargets.Count > 0 && !gizmoBuilderToUse.SupportsMultipleObjects)
             {
                 useTargets.RemoveRange(1, useTargets.Count - 1);
             }
@@ -303,47 +304,48 @@ namespace f3
                 DismissActiveGizmo();
             }
 
-            if (targets != null)
+            if (targets == null)
             {
-                _activeGizmo = gizmoBuilderToUse.Build(Context.Scene, useTargets);
-
-                if (_activeGizmo == null)
-                {
-                    return;
-                }
-
-                // set frame type. behavior here is a bit tricky...we have a default frame type
-                // and then a cached type for each object. However if we only cache type on explicit
-                // user changes, then if user changes default, all other gizmos inherit this default.
-                // This is currently a problem because we are also using default frame type to
-                // control things like snapping behavior (local=translate+rotate, world=translate-only).
-                // So then if we change that, we can change default, which then changes object gizmo 
-                // behavior in unexpected ways. So right now we are initializing cache with a per-type
-                // default (always Local right now), which user can then change. This "feels" right-est...
-                if (_activeGizmo.SupportsFrameMode)
-                {
-                    if (targets.Count == 1)
-                    {
-                        if (_lastFrameTypeCache.ContainsKey(useTargets[0]) == false)
-                        {
-                            _lastFrameTypeCache[useTargets[0]] = InitialFrameType(useTargets[0]);
-                        }
-
-                        _activeGizmo.CurrentFrameMode = _lastFrameTypeCache[useTargets[0]];
-                    }
-                    else
-                    {
-                        _activeGizmo.CurrentFrameMode = _defaultFrameType;
-                    }
-                }
-
-                Context.Scene.AddUIElement(_activeGizmo);
-                SendOnActiveGizmoModified();
+                return;
             }
+            
+            _activeGizmo = gizmoBuilderToUse.Build(Context.Scene, useTargets);
+
+            if (_activeGizmo == null)
+            {
+                return;
+            }
+
+            // set frame type. behavior here is a bit tricky...we have a default frame type
+            // and then a cached type for each object. However if we only cache type on explicit
+            // user changes, then if user changes default, all other gizmos inherit this default.
+            // This is currently a problem because we are also using default frame type to
+            // control things like snapping behavior (local=translate+rotate, world=translate-only).
+            // So then if we change that, we can change default, which then changes object gizmo 
+            // behavior in unexpected ways. So right now we are initializing cache with a per-type
+            // default (always Local right now), which user can then change. This "feels" right-est...
+            if (_activeGizmo.SupportsFrameMode)
+            {
+                if (targets.Count == 1)
+                {
+                    if (_lastFrameTypeCache.ContainsKey(useTargets[0]) == false)
+                    {
+                        _lastFrameTypeCache[useTargets[0]] = InitialFrameType(useTargets[0]);
+                    }
+
+                    _activeGizmo.CurrentFrameMode = _lastFrameTypeCache[useTargets[0]];
+                }
+                else
+                {
+                    _activeGizmo.CurrentFrameMode = _defaultFrameType;
+                }
+            }
+
+            Context.Scene.AddUIElement(_activeGizmo);
+            SendOnActiveGizmoModified();
         }
 
-        private ITransformGizmoBuilder ChooseGizmoBuilders(List<SceneObject> targets,
-            ITransformGizmoBuilder defaultBuilder)
+        private ITransformGizmoBuilder ChooseGizmoBuilders(List<SceneObject> targets, ITransformGizmoBuilder defaultBuilder)
         {
             // current default active gizmo builder
             // use override if defined
@@ -385,14 +387,7 @@ namespace f3
         private void Scene_SelectionChangedEvent(object sender, EventArgs e)
         {
             FScene scene = Context.Scene;
-            List<SceneObject> vSelected = new List<SceneObject>();
-            foreach (SceneObject tso in scene.Selected)
-            {
-                if (tso != null && (_selectionFilterF == null || _selectionFilterF(tso)))
-                {
-                    vSelected.Add(tso);
-                }
-            }
+            List<SceneObject> vSelected = GetSelectedObjects(scene);
 
             if (vSelected.Count == 0 && _activeGizmo != null)
             {
@@ -401,7 +396,7 @@ namespace f3
                 return;
             }
 
-            if (_activeGizmo != null && UnorderedListsEqual(vSelected, _activeGizmo.Targets) == false)
+            if (_activeGizmo != null && !UnorderedListsEqual(vSelected, _activeGizmo.Targets))
             {
                 DismissActiveGizmo();
             }
@@ -410,20 +405,12 @@ namespace f3
             {
                 Context.RegisterNextFrameAction(AddGizmoNextFrame);
             }
-            //AddGizmo(vSelected);
         }
 
         private void AddGizmoNextFrame()
         {
             FScene scene = Context.Scene;
-            List<SceneObject> vSelected = new List<SceneObject>();
-            foreach (SceneObject tso in scene.Selected)
-            {
-                if (tso != null && (_selectionFilterF == null || _selectionFilterF(tso)))
-                {
-                    vSelected.Add(tso);
-                }
-            }
+            List<SceneObject> vSelected = GetSelectedObjects(scene);
 
             if (vSelected.Count > 0)
             {
@@ -431,10 +418,13 @@ namespace f3
             }
         }
 
+        private List<SceneObject> GetSelectedObjects(FScene scene) => 
+            scene.Selected.Where(tso => tso != null && _selectionFilterF?.Invoke(tso) == true).ToList();
+
         private void UpdateGizmo()
         {
             DismissActiveGizmo();
-            Scene_SelectionChangedEvent(null, null);
+            Scene_SelectionChangedEvent(sender: null, e: null);
         }
         
         /// <summary>
@@ -457,13 +447,9 @@ namespace f3
 
     public class NoGizmoBuilder : ITransformGizmoBuilder
     {
-        public bool SupportsMultipleObjects {
-            get { return true; }
-        }
-        public ITransformGizmo Build(FScene scene, List<SceneObject> targets)
-        {
-            return null;
-        }
+        public bool SupportsMultipleObjects => true;
+
+        public ITransformGizmo Build(FScene scene, List<SceneObject> targets) => null;
     }
 
 }
