@@ -419,7 +419,7 @@ namespace f3
         }
 
         private List<SceneObject> GetSelectedObjects(FScene scene) => 
-            scene.Selected.Where(tso => tso != null && _selectionFilterF?.Invoke(tso) == true).ToList();
+            scene.Selected.Where(tso => tso != null && (_selectionFilterF == null || _selectionFilterF(tso))).ToList();
 
         private void UpdateGizmo()
         {
