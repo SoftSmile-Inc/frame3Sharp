@@ -123,6 +123,8 @@ namespace f3
             }
         }
 
+        public bool IsOnStart => ICurrent == 0;
+
         public ChangeHistory()
         {
             vHistory = new List<IChangeOp>();
