@@ -27,7 +27,7 @@ namespace f3
 		}
 
 		// stored frames from target used during click-drag interaction
-		Frame3f translateFrameL;		// local-spaace frame
+		Frame3f translateFrameS;		// scene-space frame
 		Frame3f translateFrameW;		// world-space frame
 		Vector3f translateAxisW;		// world translation axis (redundant...)
 
@@ -37,8 +37,9 @@ namespace f3
 
 		public override bool BeginCapture(ITransformable target, Ray3f worldRay, UIRayHit hit)
 		{
-			// save local and world frames
-			translateFrameL = target.GetLocalFrame (CoordSpace.ObjectCoords);
+			// save scene and world frames
+			// when hierarchical structure is present then Scene frame represents correct coordinates of the SO
+			translateFrameS = target.GetLocalFrame (CoordSpace.SceneCoords);
 			translateFrameW = target.GetLocalFrame (CoordSpace.WorldCoords);
 			translateAxisW = translateFrameW.GetAxis (nTranslationAxis);
 
@@ -65,14 +66,14 @@ namespace f3
 			float fDeltaT = (fNewT - fTranslateStartT);
             fDeltaT *= TranslationScaleF();
             if (DeltaDistanceConstraintF != null)
-                fDeltaT = DeltaDistanceConstraintF(translateFrameL, nTranslationAxis, fDeltaT);
+                fDeltaT = DeltaDistanceConstraintF(translateFrameS, nTranslationAxis, fDeltaT);
 
             // construct new frame translated along axis (in local space)
-            Frame3f newFrame = translateFrameL;
-			newFrame.Origin += fDeltaT * translateFrameL.GetAxis(nTranslationAxis);
+            Frame3f newFrame = translateFrameS;
+			newFrame.Origin += fDeltaT * translateFrameS.GetAxis(nTranslationAxis);
 
 			// update target
-			target.SetLocalFrame (newFrame, CoordSpace.ObjectCoords);
+			target.SetLocalFrame (newFrame, CoordSpace.SceneCoords);
 
 			return true;
 		}
