@@ -12,7 +12,7 @@ namespace f3
         // returns true if changes were emitted
         bool DoneTransformation(bool bEmitChange);
 
-        SceneObject Target { get; }
+        event TransformChangedEventHandler OnTransformModified;
     }
     
     /// <summary>

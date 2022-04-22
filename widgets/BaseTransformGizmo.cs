@@ -78,7 +78,7 @@ namespace f3
                 EndCapture(null);
 
             if (targetWrapper != null)
-                targetWrapper.Target.OnTransformModified -= onTransformModified;
+                targetWrapper.OnTransformModified -= onTransformModified;
 
             FUtil.SafeSendEvent(OnDisconnected, this, EventArgs.Empty);
         }
@@ -126,7 +126,7 @@ namespace f3
             SetLayer(FPlatform.WidgetOverlayLayer);
 
             InitializeTargetWrapper();
-            targetWrapper.Target.OnTransformModified += onTransformModified;
+            targetWrapper.OnTransformModified += onTransformModified;
             onTransformModified(null);
 
             return this;
