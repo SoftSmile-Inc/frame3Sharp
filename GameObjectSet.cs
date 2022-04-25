@@ -219,8 +219,11 @@ namespace f3
             return null;
         }
 
-
-
-	}
+        public virtual void SetLayer(int nLayer)
+        {
+            foreach (GameObject go in GameObjects)
+                go.SetLayer(nLayer);
+        }
+    }
 }
 
