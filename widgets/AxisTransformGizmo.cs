@@ -233,7 +233,7 @@ namespace f3
             Widgets.Clear();
 
             if (targetWrapper != null)
-                targetWrapper.Target.OnTransformModified -= onTransformModified;
+                targetWrapper.OnTransformModified -= onTransformModified;
 
             // if we created an internal group SO, get rid of it
             if (internalGroupSO != null) {
@@ -454,7 +454,7 @@ namespace f3
 
             // disconect existing wrapper
             if (targetWrapper != null)
-                targetWrapper.Target.OnTransformModified -= onTransformModified;
+                targetWrapper.OnTransformModified -= onTransformModified;
 
             // if we have multiple targets, we construct a transient SO to
             // act as a parent (stored as internalGroupSO)
@@ -470,7 +470,7 @@ namespace f3
             targetWrapper = InitializeTransformWrapper(useSO, eFrame);
 
             //connect up to it
-            targetWrapper.Target.OnTransformModified += onTransformModified;
+            targetWrapper.OnTransformModified += onTransformModified;
             onTransformModified(null);
 
             // configure gizmo

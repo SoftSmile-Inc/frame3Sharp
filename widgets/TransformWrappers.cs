@@ -4,7 +4,6 @@ using g3;
 
 namespace f3
 {
-
     public interface ITransformWrapper : ITransformable
     {
         void BeginTransformation();
@@ -12,28 +11,9 @@ namespace f3
         // returns true if changes were emitted
         bool DoneTransformation(bool bEmitChange);
 
-        SceneObject Target { get; }
-    }
-    
-    /// <summary>
-    /// Target Wrapper for cases when the number of targets is greater than one.
-    /// </summary>
-    public interface IMultipleTransformWrapper : ITransformable
-    {
-        void BeginTransformation();
-
-        // returns true if changes were emitted
-        bool DoneTransformation(bool bEmitChange);
-
-        IEnumerable<SceneObject> Targets { get; }
-        
-        /// <summary>
-        /// We do not have direct access to RootGameObject, neither we can make assumptions
-        /// about whether we can use one of the targets -- so we ask those who implement the interface to provide an appropriate event handler 
-        /// </summary>
         event TransformChangedEventHandler OnTransformModified;
     }
-    
+
     public abstract class BaseTransformWrapper : ITransformWrapper
     {
         abstract public bool SupportsScaling { get; }
@@ -45,11 +25,18 @@ namespace f3
         protected SceneObject target;
         virtual public SceneObject Target { get { return target; } }
 
-        virtual public fGameObject RootGameObject {
+        virtual public fGameObject RootGameObject
+        {
             get { return Target.RootGameObject; }
         }
 
         TransformGizmoChange curChange;
+
+        public event TransformChangedEventHandler OnTransformModified
+        {
+            add { Target.OnTransformModified += value; }
+            remove { Target.OnTransformModified -= value; }
+        }
 
         virtual public void BeginTransformation()
         {
@@ -58,12 +45,14 @@ namespace f3
             curChange.parentBefore = GetLocalFrame(CoordSpace.SceneCoords);
             curChange.parentScaleBefore = GetLocalScale();
 
-            if (target.IsTemporary) {
+            if (target.IsTemporary)
+            {
                 curChange.childSOs = new List<SceneObject>();
                 SceneUtil.FindAllPersistentTransformableChildren(target, curChange.childSOs);
                 curChange.before = new List<Frame3f>();
                 curChange.scaleBefore = new List<Vector3f>();
-                foreach (SceneObject so in curChange.childSOs) {
+                foreach (SceneObject so in curChange.childSOs)
+                {
                     curChange.before.Add(so.GetLocalFrame(CoordSpace.SceneCoords));
                     curChange.scaleBefore.Add(UnityUtil.GetFreeLocalScale(so.RootGameObject));
                 }
@@ -80,10 +69,12 @@ namespace f3
                  curChange.parentScaleBefore.EpsilonEqual(curChange.parentScaleAfter, MathUtil.ZeroTolerancef))
                 return false;
 
-            if (target.IsTemporary) {
+            if (target.IsTemporary)
+            {
                 curChange.after = new List<Frame3f>();
                 curChange.scaleAfter = new List<Vector3f>();
-                foreach (SceneObject so in curChange.childSOs) {
+                foreach (SceneObject so in curChange.childSOs)
+                {
                     curChange.after.Add(so.GetLocalFrame(CoordSpace.SceneCoords));
                     curChange.scaleAfter.Add(UnityUtil.GetFreeLocalScale(so.RootGameObject));
                 }
@@ -146,7 +137,7 @@ namespace f3
 
         public SceneFrameWrapper(FScene scene, SceneObject target)
         {
-            this.parentScene = scene;
+            parentScene = scene;
             this.target = target;
         }
 
@@ -173,11 +164,16 @@ namespace f3
         override public Frame3f GetLocalFrame(CoordSpace eSpace)
         {
             Frame3f targetFrame = target.GetLocalFrame(eSpace);
-            if (eSpace == CoordSpace.WorldCoords) {
+            if (eSpace == CoordSpace.WorldCoords)
+            {
                 return new Frame3f(targetFrame.Origin, parentScene.RootGameObject.GetRotation());
-            } else if (eSpace == CoordSpace.SceneCoords) {
+            }
+            else if (eSpace == CoordSpace.SceneCoords)
+            {
                 return new Frame3f(targetFrame.Origin, parentScene.RootGameObject.GetLocalRotation());
-            } else {
+            }
+            else
+            {
                 return new Frame3f(targetFrame.Origin, curRotation * Quaternionf.Identity);
             }
         }
