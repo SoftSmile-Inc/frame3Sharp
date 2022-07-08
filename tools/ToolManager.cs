@@ -54,6 +54,14 @@ namespace f3
         }
 
 
+        public void UnregisterToolType(string sType)
+        {
+            if (!ToolTypes.ContainsKey(sType))
+                throw new ArgumentException("ToolManager.RegisterToolType : type " + sType + " is not registered!");
+            ToolTypes.Remove(sType);
+        }
+
+
         public IToolBuilder FindToolTypeBuilder(string sType)
         {
             if (ToolTypes.ContainsKey(sType) == false)
