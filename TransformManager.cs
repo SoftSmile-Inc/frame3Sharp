@@ -104,6 +104,18 @@ namespace f3
         }
 
         /// <summary>
+        /// Remove associaton for a gizmo builder identifier
+        /// </summary>
+        public void UnregisterGizmoType(string sType)
+        {
+            if (!_gizmoTypes.ContainsKey(sType))
+            {
+                throw new ArgumentException($"TransformManager.RegisterGizmoType : type {sType} is not registered!");
+            }
+            _gizmoTypes.Remove(sType);
+        }
+
+        /// <summary>
         /// Current active default gizmo type/builder
         /// </summary>
         public string ActiveGizmoType => _sActiveGizmoType;
