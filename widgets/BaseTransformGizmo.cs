@@ -162,7 +162,7 @@ namespace f3
         {
             hit = null;
             GameObjectRayHit hitg = null;
-            if (is_interactive && FindGORayIntersection(ray, out hitg)) {
+            if (is_interactive && FindGORayIntersection(ray.ToRay(), out hitg)) {
                 if (hitg.hitGO != null) {
                     hit = new UIRayHit(hitg, this);
                     return true;

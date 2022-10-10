@@ -54,7 +54,7 @@ namespace f3
                 foreach (SceneObject so in curChange.childSOs)
                 {
                     curChange.before.Add(so.GetLocalFrame(CoordSpace.SceneCoords));
-                    curChange.scaleBefore.Add(UnityUtil.GetFreeLocalScale(so.RootGameObject));
+                    curChange.scaleBefore.Add(UnityUtil.GetFreeLocalScale(so.RootGameObject).ToVector3f());
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace f3
                 foreach (SceneObject so in curChange.childSOs)
                 {
                     curChange.after.Add(so.GetLocalFrame(CoordSpace.SceneCoords));
-                    curChange.scaleAfter.Add(UnityUtil.GetFreeLocalScale(so.RootGameObject));
+                    curChange.scaleAfter.Add(UnityUtil.GetFreeLocalScale(so.RootGameObject).ToVector3f());
                 }
             }
 

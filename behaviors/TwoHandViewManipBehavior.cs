@@ -95,18 +95,18 @@ namespace f3
                 Vector3f hit1 = hitFrame.RayPlaneIntersection(left.Origin, left.Direction, 2);
                 Vector3f hit2 = hitFrame.RayPlaneIntersection(right.Origin, right.Direction, 2);
                 Vector3f avg = (hit1 + hit2) * 0.5f;
-                float r0 = (hit1 - (Vector3f)go.transform.position).Length;
-                float r1 = (hit2 - (Vector3f)go.transform.position).Length;
+                float r0 = (hit1 - go.transform.position.ToVector3f()).Length;
+                float r1 = (hit2 - go.transform.position.ToVector3f()).Length;
                 float r = (r0 + r1) * 0.5f;
                 float min_r = VRUtil.GetVRRadiusForVisualAngle(avg, camState.camPosition, 2.0f);
                 r = (float)Math.Max(r, min_r);
-                go.transform.localScale = r * Vector3f.One;
+                go.transform.localScale = (r * Vector3f.One).ToVector3();
                 go.GetComponent<Renderer>().material =
                     (r > deadzone_r) ? mYes : mNo;
             }
             public void CompleteSetWorldScale(Cockpit cockpit)
             {
-                Vector3f c = go.transform.position;
+                Vector3f c = go.transform.position.ToVector3f();
                 float r = go.transform.localScale[0];
                 go.Destroy();
 
@@ -147,12 +147,12 @@ namespace f3
             bool bHit1 = cockpit.Scene.FindSceneRayIntersection(input.vLeftSpatialWorldRay, out hit1);
             bool bHit2 = cockpit.Scene.FindSceneRayIntersection(input.vRightSpatialWorldRay, out hit2);
             if ( bHit1 && bHit2 ) {
-                Vector3 avg = (hit1.hitPos + hit2.hitPos) * 0.5f;
-                float d = VRUtil.GetVRRadiusForVisualAngle(avg, camFrame.Origin, 2.0f);
+                Vector3 avg = ((hit1.hitPos + hit2.hitPos) * 0.5f).ToVector3();
+                float d = VRUtil.GetVRRadiusForVisualAngle(avg.ToVector3f(), camFrame.Origin, 2.0f);
                 if ( (hit1.hitPos - hit2.hitPos).Length < d ) {
                     hi.eMode = ActionMode.SetWorldScale;
                     Frame3f centerF = cockpit.Scene.SceneFrame;
-                    centerF.Origin = avg;
+                    centerF.Origin = avg.ToVector3f();
                     Frame3f planeF = new Frame3f(centerF.Origin, camFrame.Z);
                     hi.BeginSetWorldScale(centerF, planeF, 2*d);
                     hi.UpdateSetWorldScale(input.vLeftSpatialWorldRay, input.vRightSpatialWorldRay);
@@ -189,7 +189,7 @@ namespace f3
             Vector3f n = vValue.Normalized;
 
             if (mag < fDeadzoneWidthRad)
-                return Vector3.zero;
+                return Vector3f.Zero;
             mag -= fDeadzoneWidthRad;
             return mag * n;
         }
@@ -215,9 +215,9 @@ namespace f3
             // zoom is indicated by moving hands together/apart. But we want to get rid of
             // influence from other gestures (like rotate below) so we project to camera-right axis first.
             Frame3f camFrame = cockpit.ActiveCamera.GetWorldFrame();
-            Vector3 right = camFrame.X;
-            float fOrig = Vector3.Dot((hi.rightStartF.Origin - hi.leftStartF.Origin), hi.camRight);
-            float fCur = Vector3.Dot((input.RightHandFrame.Origin - input.LeftHandFrame.Origin), right);
+            Vector3 right = camFrame.X.ToVector3();
+            float fOrig = Vector3f.Dot((hi.rightStartF.Origin - hi.leftStartF.Origin), hi.camRight);
+            float fCur = Vector3f.Dot((input.RightHandFrame.Origin - input.LeftHandFrame.Origin), right.ToVector3f());
             float deltaZAbs = fCur - fOrig;
             float deltaZ = (hi.bInZoomDeadzone) ? ApplyDeadzone(deltaZAbs, fZoomDeadzoneInM) : deltaZAbs-hi.fZoomShift;
             if (Math.Abs(deltaZ) > 0 && hi.bInZoomDeadzone) {
@@ -240,7 +240,7 @@ namespace f3
                 hi.bInPanDeadzone = false;
                 hi.vPanShift = translateO-translate;
             }
-            hi.runningT = Vector3.Lerp(hi.runningT, translate, fTrackAlpha);
+            hi.runningT = Vector3f.Lerp(hi.runningT, translate, fTrackAlpha);
             Vector3f tx = hi.runningT * fPanScale * fSceneScale;
             if (tx.Length != 0.0f && hi.activeXForm == TransformType.NoTransform)
                 hi.activeXForm = TransformType.Pan;
@@ -253,12 +253,12 @@ namespace f3
             //   of the translation first!
             //     (above only applies if we permit simultaneous rotate & translate, which is currently disabled...)
             //Vector3 rotTranslate = translate;
-            Vector3f rotTranslate = Vector3.zero;
-            Vector3f origCenterXY = new Vector3(cOrig[0], 0, cOrig[2]);
+            Vector3f rotTranslate = Vector3f.Zero;
+            Vector3f origCenterXY = new Vector3f(cOrig[0], 0, cOrig[2]);
             Vector3f shiftLeftO = input.LeftHandFrame.Origin - rotTranslate;
             Vector3f shiftRightO = input.RightHandFrame.Origin - rotTranslate;
             Vector3f shiftCenter = 0.5f * (shiftLeftO + shiftRightO);
-            Vector3f curCenterXY = new Vector3(shiftCenter[0], 0, shiftCenter[2]);
+            Vector3f curCenterXY = new Vector3f(shiftCenter[0], 0, shiftCenter[2]);
             Vector3f sharedC = 0.5f * (origCenterXY + curCenterXY);
             float aLeft = VRUtil.PlaneAngleSigned(hi.leftStartF.Origin - sharedC, shiftLeftO - sharedC, 1);
             float aRight = VRUtil.PlaneAngleSigned(hi.rightStartF.Origin - sharedC, shiftRightO - sharedC, 1);
@@ -279,13 +279,13 @@ namespace f3
             // We compute an average tilt up/down angle at the start, and then the per-hand delta
             // each frame, as well as the average delta, and use the smallest of these. 
             // mean hand-tilt at start frame
-            float o1 = VRUtil.PlaneAngleSigned(hi.leftStartF.Rotation * Vector3.forward, hi.camForward, hi.camRight);
-            float o2 = VRUtil.PlaneAngleSigned(hi.rightStartF.Rotation * Vector3.forward, hi.camForward, hi.camRight);
+            float o1 = VRUtil.PlaneAngleSigned(hi.leftStartF.Rotation * Vector3f.AxisZ, hi.camForward, hi.camRight);
+            float o2 = VRUtil.PlaneAngleSigned(hi.rightStartF.Rotation * Vector3f.AxisZ, hi.camForward, hi.camRight);
             float oa = (o1 + o2) * 0.5f;
             // per-frame hand tilt
-            Vector3 camfw = camFrame.Z, camright = camFrame.X;
-            float c1 = VRUtil.PlaneAngleSigned(input.LeftHandFrame.Rotation * Vector3.forward, camfw, camright);
-            float c2 = VRUtil.PlaneAngleSigned(input.RightHandFrame.Rotation * Vector3.forward, camfw, camright);
+            Vector3f camfw = camFrame.Z, camright = camFrame.X;
+            float c1 = VRUtil.PlaneAngleSigned(input.LeftHandFrame.Rotation * Vector3f.AxisZ, camfw, camright);
+            float c2 = VRUtil.PlaneAngleSigned(input.RightHandFrame.Rotation * Vector3f.AxisZ, camfw, camright);
             // use the smallest per-hand tilt delta, to prevent one-hand tilting from having an effect
             float d1 = oa - c1, d2 = oa - c2;
 

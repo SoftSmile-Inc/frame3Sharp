@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using g3;
 
@@ -550,7 +548,7 @@ namespace f3
 
 
             for ( int i = 0; i < mesh.vertexCount; ++i ) {
-                Vector3d v = vertices[i];
+                Vector3d v = vertices[i].ToVector3f();
                 if (bSwapLeftRight) {
                     v.x = -v.x;
                     v.z = -v.z;
@@ -558,7 +556,7 @@ namespace f3
                 NewVertexInfo vInfo = new NewVertexInfo(v);
                 if ( bNormals ) {
                     vInfo.bHaveN = true;
-                    vInfo.n = normals[i];
+                    vInfo.n = normals[i].ToVector3f();
                     if (bSwapLeftRight) {
                         vInfo.n.x = -vInfo.n.x;
                         vInfo.n.z = -vInfo.n.z;
@@ -569,11 +567,11 @@ namespace f3
                     if (bByteColors)
                         vInfo.c = new Colorf(colors32[i].r, colors32[i].g, colors32[i].b, 255);
                     else
-                        vInfo.c = colors[i];
+                        vInfo.c = colors[i].ToVector3f();
                 }
                 if ( bUVs ) {
                     vInfo.bHaveUV = true;
-                    vInfo.uv = uv[i];
+                    vInfo.uv = uv[i].ToVector2f();
                 }
 
                 int vid = smesh.AppendVertex(vInfo);
@@ -610,7 +608,7 @@ namespace f3
             DMesh3 dmesh = new DMesh3(bNormals, bColors, bUVs, false);
 
             for ( int i = 0; i < mesh.vertexCount; ++i ) {
-                Vector3d v = vertices[i];
+                Vector3d v = vertices[i].ToVector3f();
                 if (bSwapLeftRight) {
                     v.x = -v.x;
                     v.z = -v.z;
@@ -618,7 +616,7 @@ namespace f3
                 NewVertexInfo vInfo = new NewVertexInfo(v);
                 if ( bNormals ) {
                     vInfo.bHaveN = true;
-                    vInfo.n = normals[i];
+                    vInfo.n = normals[i].ToVector3f();
                     if (bSwapLeftRight) {
                         vInfo.n.x = -vInfo.n.x;
                         vInfo.n.z = -vInfo.n.z;

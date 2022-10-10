@@ -38,7 +38,7 @@ namespace f3
 
             // save local and world frames
             scaleFrameW = target.GetLocalFrame(CoordSpace.WorldCoords);
-            cameraFrameW = new Frame3f(scaleFrameW.Origin, activeCamera.transform.rotation);
+            cameraFrameW = new Frame3f(scaleFrameW.Origin, activeCamera.transform.rotation.ToQuaternionf());
             startScale = target.GetLocalScale();
 
             // save initial hitpos in plane

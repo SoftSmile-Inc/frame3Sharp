@@ -35,7 +35,7 @@ namespace f3
             UIRayHit uiHit;
             if (input.bLeftTriggerPressed || input.bAButtonPressed) {
                 ActiveInput = (input.bLeftTriggerPressed) ? WhichInput.LeftTrigger : WhichInput.AButton;
-                if (scene.FindUIHit(input.vGamepadWorldRay, out uiHit)) {
+                if (scene.FindUIHit(input.vGamepadWorldRay.ToRay(), out uiHit)) {
                     bool bCanCapture = uiHit.hitUI.WantsCapture( InputEvent.Gamepad(input, new AnyRayHit(uiHit)) );
                     if (bCanCapture)
                         return CaptureRequest.Begin(this);
@@ -51,7 +51,7 @@ namespace f3
             UIRayHit uiHit;
             if (input.bLeftTriggerPressed || input.bAButtonPressed) {
                 ActiveInput = (input.bLeftTriggerPressed) ? WhichInput.LeftTrigger : WhichInput.AButton;
-                if (scene.FindUIHit(input.vGamepadWorldRay, out uiHit)) {
+                if (scene.FindUIHit(input.vGamepadWorldRay.ToRay(), out uiHit)) {
                     bool bCanCapture = uiHit.hitUI.BeginCapture( InputEvent.Gamepad(input, new AnyRayHit(uiHit)) );
                     if (bCanCapture) {
                         pCapturing = uiHit.hitUI;
@@ -102,7 +102,7 @@ namespace f3
         public override void UpdateHover(InputState input)
         {
             UIRayHit uiHit;
-            if (scene.FindUIHoverHit(input.vGamepadWorldRay, out uiHit)) {
+            if (scene.FindUIHoverHit(input.vGamepadWorldRay.ToRay(), out uiHit)) {
                 if (activeHover != null && activeHover != uiHit.hitUI)
                     EndHover(input);
 

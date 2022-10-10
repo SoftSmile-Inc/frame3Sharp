@@ -26,7 +26,7 @@ namespace f3
         {
             UIRayHit uiHit;
             if (input.bTouchPressed && input.nTouchCount == 1) {
-                if (scene.FindUIHit(input.vTouchWorldRay, out uiHit)) {
+                if (scene.FindUIHit(input.vTouchWorldRay.ToRay(), out uiHit)) {
                     bool bCanCapture = uiHit.hitUI.WantsCapture(InputEvent.Touch(input, new AnyRayHit(uiHit)));
                     if (bCanCapture)
                         return CaptureRequest.Begin(this);
@@ -42,7 +42,7 @@ namespace f3
 
             UIRayHit uiHit;
             if (input.bTouchPressed) {
-                if (scene.FindUIHit(input.vTouchWorldRay, out uiHit)) {
+                if (scene.FindUIHit(input.vTouchWorldRay.ToRay(), out uiHit)) {
                     bool bCanCapture = uiHit.hitUI.BeginCapture(InputEvent.Touch(input, new AnyRayHit(uiHit)));
                     if (bCanCapture) {
                         pCapturing = uiHit.hitUI;
