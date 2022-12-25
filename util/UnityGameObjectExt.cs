@@ -134,7 +134,7 @@ namespace f3
         {
             Renderer r = go.GetComponent<Renderer>();
             if (r != null)
-                return r.material.color;
+                return r.material.color.ToColorf();
             return Colorf.White;
         }
 
@@ -202,20 +202,20 @@ namespace f3
 
         public static Vector3f GetLocalScale(this GameObject go)
         {
-            return go.transform.localScale;
+            return go.transform.localScale.ToVector3f();
         }
         public static void SetLocalScale(this GameObject go, Vector3f scale)
         {
-            go.transform.localScale = scale;
+            go.transform.localScale = scale.ToVector3();
         }
 
         public static Vector3f GetLocalPosition(this GameObject go)
         {
-            return go.transform.localPosition;
+            return go.transform.localPosition.ToVector3f();
         }
         public static void SetLocalPosition(this GameObject go, Vector3f position)
         {
-            go.transform.localPosition = position;
+            go.transform.localPosition = position.ToVector3();
         }
 
 
@@ -249,11 +249,11 @@ namespace f3
 
         public static void SetColor(this Material mat, Colorf color)
         {
-            mat.color = color;
+            mat.color = color.ToColor();
         }
         public static Colorf GetColor(this Material mat)
         {
-            return new Colorf(mat.color);
+            return new Colorf(mat.color.ToColorf());
         }
 
         public static void SetRenderStage(this Material mat, RenderStage eStage)

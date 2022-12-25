@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 using g3;
 
@@ -40,7 +42,7 @@ namespace f3
                 (gameObj.AddComponent(typeof(MeshRenderer)) as MeshRenderer).material = setMaterial;
             } else {
                 (gameObj.AddComponent(typeof(MeshRenderer)) as MeshRenderer).material =
-                    MaterialUtil.CreateStandardMaterial(Color.red);
+                    MaterialUtil.CreateStandardMaterial(Colorf.Red);
             }
             return gameObj;
         }
@@ -97,20 +99,20 @@ namespace f3
         public static Frame3f GetGameObjectFrame(GameObject go, CoordSpace eSpace)
         {
             if (eSpace == CoordSpace.WorldCoords)
-                return new Frame3f(go.transform.position, go.transform.rotation);
+                return new Frame3f(go.transform.position.ToVector3f(), go.transform.rotation.ToQuaternionf());
             else if (eSpace == CoordSpace.ObjectCoords)
-                return new Frame3f(go.transform.localPosition, go.transform.localRotation);
+                return new Frame3f(go.transform.localPosition.ToVector3f(), go.transform.localRotation.ToQuaternionf());
             else
                 throw new ArgumentException("not possible without refernce to scene!");
         }
         public static void SetGameObjectFrame(GameObject go, Frame3f newFrame, CoordSpace eSpace)
         {
             if (eSpace == CoordSpace.WorldCoords) {
-                go.transform.position = newFrame.Origin;
-                go.transform.rotation = newFrame.Rotation;
+                go.transform.position = newFrame.Origin.ToVector3();
+                go.transform.rotation = newFrame.Rotation.ToQuaternion();
             } else if (eSpace == CoordSpace.ObjectCoords) {
-                go.transform.localPosition = newFrame.Origin;
-                go.transform.localRotation = newFrame.Rotation;
+                go.transform.localPosition = newFrame.Origin.ToVector3();
+                go.transform.localRotation = newFrame.Rotation.ToQuaternion();
             } else {
                 // [RMS] cannot do this w/o handle to scene...
                 Debug.Log("[MathUtil.SetGameObjectFrame] unsupported!\n");
@@ -174,8 +176,8 @@ namespace f3
             if (collider.Raycast(ray, out hitInfo, Mathf.Infinity)) {
                 hit = new GameObjectRayHit();
                 hit.fHitDist = hitInfo.distance;
-                hit.hitPos = hitInfo.point;
-                hit.hitNormal = hitInfo.normal;
+                hit.hitPos = hitInfo.point.ToVector3f();
+                hit.hitNormal = hitInfo.normal.ToVector3f();
                 hit.hitGO = go;
             }
             go.EnableCollider(bIsEnabled);
@@ -189,7 +191,7 @@ namespace f3
         {
             Renderer r = go.GetComponent<Renderer>();
             if (r != null) {
-                return r.bounds;
+                return r.bounds.ToAxisAlignedBox3f();
             } else if ( go.HasChildren() ) {
                 AxisAlignedBox3f b = AxisAlignedBox3f.Empty; int i = 0;
                 foreach (GameObject child_go in go.Children()) {
@@ -200,7 +202,7 @@ namespace f3
                 }
                 return b;
             } else {
-                return new AxisAlignedBox3f(go.transform.position, new Vector3(0.001f, 0.001f, 0.001f));
+                return new AxisAlignedBox3f(go.transform.position.ToVector3f(), new Vector3f(0.001f, 0.001f, 0.001f));
             }
         }
 
@@ -227,7 +229,7 @@ namespace f3
         /// </summary>
         public static AxisAlignedBox3f GetGeometryBoundingBox(GameObject go, bool bIncludeChildren = false) {
             MeshFilter f = go.GetComponent<MeshFilter>();
-            AxisAlignedBox3f b = (f != null) ? (AxisAlignedBox3f)f.mesh.bounds : AxisAlignedBox3f.Empty;
+            AxisAlignedBox3f b = (f != null) ? f.mesh.bounds.ToAxisAlignedBox3f() : AxisAlignedBox3f.Empty;
 
             if ( bIncludeChildren && go.HasChildren() ) {
                 foreach (GameObject child_go in go.Children()) {
@@ -359,8 +361,8 @@ namespace f3
         {
             Vector3[] verts = m.vertices;
             for ( int k = 0; k < verts.Length; ++k ) {
-                Vector3f v = verts[k];
-                verts[k] = q * (v - center) + center;
+                Vector3f v = verts[k].ToVector3f();
+                verts[k] = (q * (v - center) + center).ToVector3();
             }
             m.vertices = verts;
         }
@@ -369,8 +371,8 @@ namespace f3
         {
             Vector3[] verts = m.vertices;
             for ( int k = 0; k < verts.Length; ++k ) {
-                Vector3f v = verts[k];
-                verts[k] = scale * (v - center) + center;
+                Vector3f v = verts[k].ToVector3f();
+                verts[k] = (scale * (v - center) + center).ToVector3();
             }
             m.vertices = verts;
         }
@@ -627,11 +629,11 @@ namespace f3
                     if (bByteColors)
                         vInfo.c = new Colorf(colors32[i].r, colors32[i].g, colors32[i].b, 255);
                     else
-                        vInfo.c = colors[i];
+                        vInfo.c = colors[i].ToVector3f();
                 }
                 if ( bUVs ) {
                     vInfo.bHaveUV = true;
-                    vInfo.uv = uv[i];
+                    vInfo.uv = uv[i].ToVector2f();
                 }
 
                 int vid = dmesh.AppendVertex(vInfo);
@@ -652,7 +654,7 @@ namespace f3
         {
             Vector3[] meshV = new Vector3[vNewPositions.Length];
             for (int i = 0; i < vNewPositions.Length; ++i)
-                meshV[i] = vNewPositions[i];
+                meshV[i] = vNewPositions[i].ToVector3();
             unityMesh.vertices = meshV;
 
             if (bRecalcNormals)
@@ -662,7 +664,7 @@ namespace f3
         {
             Vector3[] meshV = new Vector3[vNewPositions.Length];
             for (int i = 0; i < vNewPositions.Length; ++i)
-                meshV[i] = (Vector3f)vNewPositions[i];
+                meshV[i] = ((Vector3f)vNewPositions[i]).ToVector3();
             unityMesh.vertices = meshV;
 
             if (bRecalcNormals)

@@ -39,7 +39,7 @@ namespace f3
             if (r.positionCount != Vertices.Length)
                 r.positionCount = Vertices.Length;
             for (int i = 0; i < Vertices.Length; ++i) 
-                r.SetPosition(i, Vertices[i]);
+                r.SetPosition(i, Vertices[i].ToVector3());
         }
         public virtual void update_num_points(int N)
         {
@@ -48,7 +48,7 @@ namespace f3
         }
         public virtual void update_position(int i, Vector3f v)
         {
-            r.SetPosition(i, v);
+            r.SetPosition(i, v.ToVector3());
         }
         public virtual void update_width(float width)
         {
@@ -61,7 +61,7 @@ namespace f3
         }
         public virtual void update_color(Colorf color)
         {
-            r.startColor = r.endColor = color;
+            r.startColor = r.endColor = color.ToColor();
         }
 
         public virtual void set_corner_quality(int n)
@@ -104,7 +104,7 @@ namespace f3
             //float near_plane_w = Camera.main.nearClipPlane * (float)Math.Tan(Camera.main.fieldOfView);
             //float near_pixel_w = Camera.main.pixelWidth / near_plane_w;
             float near_plane_pixel_deg = Camera.main.fieldOfView / Camera.main.pixelWidth;
-            float fWidth = VRUtil.GetVRRadiusForVisualAngle(center, Camera.main.transform.position, near_plane_pixel_deg);
+            float fWidth = VRUtil.GetVRRadiusForVisualAngle(center, Camera.main.transform.position.ToVector3f(), near_plane_pixel_deg);
             r.startWidth = r.endWidth = width * fWidth;
         }
 

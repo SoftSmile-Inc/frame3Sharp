@@ -366,7 +366,7 @@ namespace f3
         {
             if (input.bLeftTriggerPressed ^ input.bRightTriggerPressed) {
                 CaptureSide eSide = (input.bLeftTriggerPressed) ? CaptureSide.Left : CaptureSide.Right;
-                Ray sideRay = (eSide == CaptureSide.Left) ? input.vLeftSpatialWorldRay : input.vRightSpatialWorldRay;
+                Ray3f sideRay = (eSide == CaptureSide.Left) ? input.vLeftSpatialWorldRay : input.vRightSpatialWorldRay;
                 ITool tool = context.ToolManager.GetActiveTool((int)eSide);
                 if (tool != null && tool is DrawPrimitivesTool) {
                     AnyRayHit rayHit;
@@ -379,13 +379,13 @@ namespace f3
 
         override public Capture BeginCapture(InputState input, CaptureSide eSide)
         {
-            Ray sideRay = (eSide == CaptureSide.Left) ? input.vLeftSpatialWorldRay : input.vRightSpatialWorldRay;
+            Ray sideRay = (eSide == CaptureSide.Left) ? input.vLeftSpatialWorldRay.ToRay() : input.vRightSpatialWorldRay.ToRay();
             Frame3f sideHandF = (eSide == CaptureSide.Left) ? input.LeftHandFrame : input.RightHandFrame;
             DrawPrimitivesTool tool = context.ToolManager.GetActiveTool((int)eSide) as DrawPrimitivesTool;
 
             AnyRayHit rayHit;
-            if (context.Scene.FindSceneRayIntersection(sideRay, out rayHit)) {
-                tool.BeginDraw_Spatial(sideRay, rayHit, sideHandF, 0);
+            if (context.Scene.FindSceneRayIntersection(sideRay.ToRay3f(), out rayHit)) {
+                tool.BeginDraw_Spatial(sideRay.ToRay3f(), rayHit, sideHandF, 0);
                 return Capture.Begin(this, eSide, new capture_data() { nStep = 0 });
             }
             return Capture.Ignore;
@@ -404,11 +404,11 @@ namespace f3
                 return Capture.End;
             }
 
-            Ray sideRay = (data.which == CaptureSide.Left) ? input.vLeftSpatialWorldRay : input.vRightSpatialWorldRay;
+            Ray sideRay = (data.which == CaptureSide.Left) ? input.vLeftSpatialWorldRay.ToRay() : input.vRightSpatialWorldRay.ToRay();
             Frame3f sideHandF = (data.which == CaptureSide.Left) ? input.LeftHandFrame : input.RightHandFrame;
             capture_data cap = data.custom_data as capture_data;
 
-            tool.UpdateDraw_Spatial(sideRay, sideHandF, cap.nStep);
+            tool.UpdateDraw_Spatial(sideRay.ToRay3f(), sideHandF, cap.nStep);
 
             bool bReleased = (data.which == CaptureSide.Left) ? input.bLeftTriggerReleased : input.bRightTriggerReleased;
             if (bReleased) {

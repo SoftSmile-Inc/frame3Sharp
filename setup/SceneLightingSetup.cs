@@ -43,7 +43,7 @@ namespace f3 {
 				GameObject lightObj = new GameObject (string.Format ("spotlight{0}", k));
 				Light lightComp = lightObj.AddComponent<Light> ();
 				lightComp.type = LightType.Directional;
-				lightComp.transform.position = vCornerPos;
+				lightComp.transform.position = vCornerPos.ToVector3();
 				lightComp.transform.LookAt (Vector3.zero);
 				lightComp.transform.RotateAround(Vector3.zero, Vector3.up, (float)k * rotAngle);
 
@@ -88,7 +88,7 @@ namespace f3 {
                 // use vertical height of light to figure out appropriate shadow distance.
                 // distance changes if we scale scene, and if we don't do this, shadow
                 // map res gets very blurry.
-                Vector3f thisW = lights[0].transform.position;
+                Vector3f thisW = lights[0].transform.position.ToVector3f();
                 float fHeight =
                     Vector3f.Dot((thisW - sceneFrameW.Origin), sceneFrameW.Y);
                 float fShadowDist = fHeight * 1.5f;
@@ -98,7 +98,7 @@ namespace f3 {
                     fShadowDist = LightDistance * 1.5f;
 
                 // need to be a multiple of eye distance
-                float fEyeDist = sceneFrameW.Origin.Distance(Camera.main.transform.position);
+                float fEyeDist = sceneFrameW.Origin.Distance(Camera.main.transform.position.ToVector3f());
                 fShadowDist = Mathf.Max(fShadowDist, 1.5f * fEyeDist);
 
                 int nShadowDist = (int)Snapping.SnapToIncrement(fShadowDist, 50);

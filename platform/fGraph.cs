@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using g3;
 
@@ -33,7 +31,7 @@ namespace f3
             for (int i = 0; i < curve.VertexCount; ++i) {
                 indices[2 * i] = i;
                 indices[2 * i + 1] = (i + 1) % NV;
-                verts[i] = (Vector3)curve[i];
+                verts[i] = curve[i].ToVector3();
             }
             graph.vertices = verts;
 
@@ -45,7 +43,7 @@ namespace f3
                 for (int i = 0; i < curve.VertexCount; ++i) {
                     Vector3d tan = curve.Tangent(i);
                     vf.AlignAxis(2, (Vector3f)tan);
-                    normals[i] = vf.X;
+                    normals[i] = vf.X.ToVector3();
                     float s = (sizes == null) ? 1.0f : sizes[i];
                     tangents[i] = new Vector4(vf.Y.x, vf.Y.y, vf.Y.z, s);
                 }
@@ -57,7 +55,7 @@ namespace f3
             if ( colors != null ) { 
                 Color[] ucolors = new Color[NV];
                 for (int i = 0; i < curve.VertexCount; ++i)
-                    ucolors[i] = colors[i];
+                    ucolors[i] = colors[i].ToColor();
                 graph.colors = ucolors;
             }
 

@@ -67,67 +67,67 @@ namespace f3
 
         public void SetPosition(Vector3f vPosition)
         {
-            camera.transform.position = vPosition;
+            camera.transform.position = vPosition.ToVector3();
         }
         public Vector3f GetPosition()
         {
-            return camera.transform.position;
+            return camera.transform.position.ToVector3f();
         }
 
         public virtual void SetRotation(Quaternionf rotation)
         {
-            camera.transform.rotation = rotation;
+            camera.transform.rotation = rotation.ToQuaternion();
         }
         public virtual Quaternionf GetRotation()
         {
-            return camera.transform.rotation;
+            return camera.transform.rotation.ToQuaternionf();
         }
 
         public void SetLocalPosition(Vector3f vPosition)
         {
-            camera.transform.localPosition = vPosition;
+            camera.transform.localPosition = vPosition.ToVector3();
         }
         public Vector3f GetLocalPosition()
         {
-            return camera.transform.localPosition;
+            return camera.transform.localPosition.ToVector3f();
         }
 
         public void SetLocalScale(Vector3f vScale)
         {
-            camera.transform.localScale = vScale;
+            camera.transform.localScale = vScale.ToVector3();
         }
         public void SetLocalScale(float fScale)
         {
-            camera.transform.localScale = fScale * Vector3f.One; 
+            camera.transform.localScale = fScale * Vector3.one;
         }
         public Vector3f GetLocalScale()
         {
-            return camera.transform.localScale;
+            return camera.transform.localScale.ToVector3f();
         }
 
 
         public Frame3f GetWorldFrame()
         {
-            return new Frame3f(camera.transform.position, camera.transform.rotation);
+            return new Frame3f(camera.transform.position.ToVector3f(), camera.transform.rotation.ToQuaternionf());
         }
         public void SetWorldFrame(Frame3f f)
         {
-            camera.transform.position = f.Origin;
-            camera.transform.rotation = f.Rotation;
+            camera.transform.position = f.Origin.ToVector3();
+            camera.transform.rotation = f.Rotation.ToQuaternion();
         }
 
 
         public Vector3f Forward()
         {
-            return camera.transform.forward;
+            return camera.transform.forward.ToVector3f();
         }
         public Vector3f Up()
         {
-            return camera.transform.up;
+            return camera.transform.up.ToVector3f();
         }
         public Vector3f Right()
         {
-            return camera.transform.right;
+            return camera.transform.right.ToVector3f();
         }
 
 

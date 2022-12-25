@@ -142,7 +142,7 @@ namespace f3
             if (start != s) {
                 start = s;
                 LineRenderer r = GetComponent<LineRenderer>();
-                r.SetPosition(0, start);
+                r.SetPosition(0, start.ToVector3());
             }
         }
         public Vector3f GetStart() { return start; }
@@ -153,7 +153,7 @@ namespace f3
             if (end != e) {
                 end = e;
                 LineRenderer r = GetComponent<LineRenderer>();
-                r.SetPosition(1, end);
+                r.SetPosition(1, end.ToVector3());
             }
         }
         public Vector3f GetEnd() { return end; }

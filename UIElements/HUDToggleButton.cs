@@ -127,7 +127,7 @@ namespace f3
                 return true;
             }
 
-            if (IsGOHit (e.ray, buttonMesh)) {
+            if (IsGOHit (e.ray.ToRay(), buttonMesh)) {
                 // this is a bit hacky...if we are in a group, then we only toggle disabled -> enabled on click,
                 // not enabled->disabled
                 if ( parentGroup != null) {

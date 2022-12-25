@@ -17,12 +17,12 @@ namespace f3
 
         public static Material CreateStandardMaterial(Colorf c) {
             Material m = SafeLoadMaterial(SceneGraphConfig.DefaultStandardMaterialPath);
-            m.color = c;
+            m.color = c.ToColor();
             return m;
         }
         public static fMaterial CreateStandardMaterialF(Colorf c) {
             Material m = SafeLoadMaterial(SceneGraphConfig.DefaultStandardMaterialPath);
-            m.color = c;
+            m.color = c.ToColor();
             return new fMaterial(m);
         }
 
@@ -30,13 +30,13 @@ namespace f3
         public static Material CreateStandardVertexColorMaterial(Colorf c)
         {
             Material m = SafeLoadMaterial("StandardMaterials/default_vertex_colored");
-            m.color = c;
+            m.color = c.ToColor();
             return m;
         }
         public static fMaterial CreateStandardVertexColorMaterialF(Colorf c)
         {
             Material m = SafeLoadMaterial("StandardMaterials/default_vertex_colored");
-            m.color = c;
+            m.color = c.ToColor();
             return new fMaterial(m);
         }
 
@@ -45,7 +45,7 @@ namespace f3
         public static fMaterial CreateFlatShadedVertexColorMaterialF(Colorf c)
         {
             Material m = SafeLoadMaterial("StandardMaterials/flat_vertex_colored");
-            m.color = c;
+            m.color = c.ToColor();
             return new fMaterial(m);
         }
 
@@ -70,25 +70,25 @@ namespace f3
         public static Material CreateTransparentMaterial(Colorf c)
         {
             Material m = SafeLoadMaterial(SceneGraphConfig.DefaultTransparentMaterialPath);
-            m.color = c;
+            m.color = c.ToColor();
             return m;
         }
         public static fMaterial CreateTransparentMaterialF(Colorf c)
         {
             Material m = SafeLoadMaterial(SceneGraphConfig.DefaultTransparentMaterialPath);
-            m.color = c;
+            m.color = c.ToColor();
             return new fMaterial(m);
         }
 
         public static Material CreateTransparentMaterial(Colorf c, float alpha) {
             Material m = SafeLoadMaterial(SceneGraphConfig.DefaultTransparentMaterialPath);
-            m.color = MakeColor(c, alpha);
+            m.color = MakeColor(c, alpha).ToColor();
             return m;
         }
         public static fMaterial CreateTransparentMaterialF(Colorf c, float alpha)
         {
             Material m = SafeLoadMaterial(SceneGraphConfig.DefaultTransparentMaterialPath);
-            m.color = MakeColor(c, alpha);
+            m.color = MakeColor(c, alpha).ToColor();
             return new fMaterial(m);
         }
 
@@ -96,7 +96,7 @@ namespace f3
         public static fDynamicTransparencyMaterial CreateDynamicTransparencyMaterialF(Colorf c)
         {
             Material m = SafeLoadMaterial(SceneGraphConfig.DefaultStandardMaterialPath);
-            m.color = c;
+            m.color = c.ToColor();
             return new fDynamicTransparencyMaterial(m);
         }
 
@@ -123,7 +123,7 @@ namespace f3
         public static Material CreateTransparentImageMaterial(string sResourcePath)
         {
             Material m = SafeLoadMaterial(SceneGraphConfig.DefaultUnlitTextureTransparentMaterialPath);
-            m.color = Colorf.White;
+            m.color = Color.white;
             Texture2D tex = SafeLoadTexture2D(sResourcePath);
             m.mainTexture = tex;
             return m;
@@ -149,7 +149,7 @@ namespace f3
             m.SetFloat("_FalloffWidth", falloff);
             m.SetVector("_Center", new Vector4(0, 0, 0, 0));
             m.SetVector("_Extents", new Vector4(w/2, h/2, 0, 0));
-            m.color = c;
+            m.color = c.ToColor();
             return new fMaterial(m);
         }
 
@@ -318,7 +318,7 @@ namespace f3
         {
             SOMaterial soMat = new SOMaterial();
             soMat.Name = unityMat.name;
-            soMat.RGBColor = unityMat.color;
+            soMat.RGBColor = unityMat.color.ToColorf();
 
             string tag = unityMat.GetTag("RenderType", true);
             bool bTransparent = (unityMat.color.a < 1 || tag == "Transparent");
@@ -342,7 +342,7 @@ namespace f3
             if (m.Type == SOMaterial.MaterialType.TextureMap) {
                 unityMat = new Material(Shader.Find("Standard"));
                 unityMat.SetName(m.Name);
-                unityMat.color = m.RGBColor;
+                unityMat.color = m.RGBColor.ToColor();
                 //if (m.Alpha < 1.0f)
                 //    MaterialUtil.SetupMaterialWithBlendMode(unityMat, MaterialUtil.BlendMode.Transparent);
                 unityMat.mainTexture = m.MainTexture;
@@ -384,7 +384,7 @@ namespace f3
                 unityMat = (m as UnitySOMaterial).unityMaterial;
 
             } else {
-                unityMat = MaterialUtil.CreateStandardMaterial(Color.black);
+                unityMat = MaterialUtil.CreateStandardMaterial(Colorf.Black);
             }
 
             if ( (m.Hints & SOMaterial.HintFlags.UseTransparentPass) != 0)
@@ -451,7 +451,7 @@ namespace f3
                 unityMat = (m as UnitySOMaterial).unityMaterial;
 
             } else {
-                unityMat = MaterialUtil.CreateStandardMaterial(Color.black);
+                unityMat = MaterialUtil.CreateStandardMaterial(Colorf.Black);
             }
 
             if ((m.Hints & SOMaterial.HintFlags.UseTransparentPass) != 0) {

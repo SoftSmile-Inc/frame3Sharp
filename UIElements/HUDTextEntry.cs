@@ -265,7 +265,7 @@ namespace f3
 
         override public bool EndCapture(InputEvent e)
         {
-            if (FindHitGO(e.ray)) {
+            if (FindHitGO(e.ray.ToRay())) {
 
                 if (sent_click == false) {
                     // on first click we reset timer

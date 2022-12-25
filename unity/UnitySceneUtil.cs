@@ -67,7 +67,7 @@ namespace f3
                 throw new Exception("UnitySceneUtil.ImportExistingUnityMesh: nonuniform scaling is not supported...");
 
             Mesh useMesh = meshF.mesh;      // makes a copy
-            AxisAlignedBox3f bounds = useMesh.bounds;       // bounds.Center is wrt local frame of input go
+            AxisAlignedBox3f bounds = useMesh.bounds.ToAxisAlignedBox3f();       // bounds.Center is wrt local frame of input go
                                                             // ie offset from origin in local coordinates
 
             // if we want to move frame to center of mesh, we have to re-center it at origin

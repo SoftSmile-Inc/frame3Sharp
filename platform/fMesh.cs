@@ -34,7 +34,7 @@ namespace f3
             int NV = source_vertices.Length;
             Vector3[] vertices = new Vector3[NV];
             for ( int i = 0; i < NV; ++i ) {
-                vertices[i] = (Vector3)source.GetVertex(source_vertices[i]);
+                vertices[i] = source.GetVertex(source_vertices[i]).ToVector3();
             }
 
             Mesh m = new Mesh();
@@ -47,7 +47,7 @@ namespace f3
             if (bCopyNormals && source.HasVertexNormals) {
                 Vector3[] normals = new Vector3[NV];
                 for (int i = 0; i < NV; ++i)
-                    normals[i] =(Vector3)source.GetVertexNormal(source_vertices[i]);
+                    normals[i] = source.GetVertexNormal(source_vertices[i]).ToVector3();
                 m.normals = normals;
             } else {
                 m.RecalculateNormals();
@@ -56,14 +56,14 @@ namespace f3
             if ( bCopyColors && source.HasVertexColors ) {
                 Color[] colors = new Color[NV];
                 for ( int i = 0; i < NV; ++i )
-                    colors[i] = (Color)source.GetVertexColor(source_vertices[i]);
+                    colors[i] = source.GetVertexColor(source_vertices[i]).ToColor();
                 m.colors = colors;
             }
 
             if ( bCopyUVs && source.HasVertexUVs ) {
                 Vector2[] uvs = new Vector2[NV];
                 for ( int i = 0; i < NV; ++i )
-                    uvs[i] = source.GetVertexUV(source_vertices[i]);
+                    uvs[i] = source.GetVertexUV(source_vertices[i]).ToVector2();
                 m.uv = uvs;
             }
 
@@ -81,7 +81,7 @@ namespace f3
             for ( int i = 0; i < NV; ++i ) {
                 if (source.IsVertex(i))
                 {
-                    tempVertHolder.Add((Vector3)source.GetVertexUnsafe(i));
+                    tempVertHolder.Add(source.GetVertexUnsafe(i).ToVector3());
                 }
             }
 
@@ -91,7 +91,7 @@ namespace f3
                 Vector3[] normals = new Vector3[NV];
                 for (int i = 0; i < NV; ++i) {
                     if (source.IsVertex(i))
-                        normals[i] = (Vector3)source.GetVertexNormal(i);
+                        normals[i] = source.GetVertexNormal(i).ToVector3();
                 }
                 mesh.normals = normals;
             }
@@ -100,7 +100,7 @@ namespace f3
                 Color[] colors = new Color[NV];
                 for (int i = 0; i < NV; ++i) {
                     if (source.IsVertex(i))
-                        colors[i] = (Color)source.GetVertexColor(i);
+                        colors[i] = source.GetVertexColor(i).ToColor();
                 }
                 mesh.colors = colors;
             }
@@ -112,7 +112,7 @@ namespace f3
             int NV = source_vertices.Length;
             Vector3[] vertices = new Vector3[NV];
             for ( int i = 0; i < NV; ++i ) {
-                vertices[i] = (Vector3)source.GetVertexUnsafe(source_vertices[i]);
+                vertices[i] = source.GetVertexUnsafe(source_vertices[i]).ToVector3();
             }
 
             mesh.vertices = vertices;
@@ -120,14 +120,14 @@ namespace f3
             if (bCopyNormals && source.HasVertexNormals) {
                 Vector3[] normals = new Vector3[NV];
                 for (int i = 0; i < NV; ++i)
-                    normals[i] =(Vector3)source.GetVertexNormal(source_vertices[i]);
+                    normals[i] = source.GetVertexNormal(source_vertices[i]).ToVector3();
                 mesh.normals = normals;
             }
 
             if ( bCopyColors && source.HasVertexColors ) {
                 Color[] colors = new Color[NV];
                 for ( int i = 0; i < NV; ++i )
-                    colors[i] = (Color)source.GetVertexColor(source_vertices[i]);
+                    colors[i] = source.GetVertexColor(source_vertices[i]).ToColor();
                 mesh.colors = colors;
             }
         }
@@ -195,9 +195,9 @@ namespace f3
             public bool HasVertexNormals { get { return normals != null && normals.Length == vertices.Length; } }
             public bool HasVertexColors { get { return colors != null && colors.Length == vertices.Length; } }
 
-            public Vector3d GetVertex(int i) { return vertices[i]; }
-            public Vector3f GetVertexNormal(int i) { return normals[i]; }
-            public Vector3f GetVertexColor(int i) { return colors[i]; }
+            public Vector3d GetVertex(int i) { return vertices[i].ToVector3f(); }
+            public Vector3f GetVertexNormal(int i) { return normals[i].ToVector3f(); }
+            public Vector3f GetVertexColor(int i) { return colors[i].ToColorf(); }
 
             public bool IsVertex(int vID) { return vID >= 0 && vID < vertices.Length; }
 
@@ -209,7 +209,7 @@ namespace f3
 		    public int MaxTriangleID { get { return triangles.Length / 3; } }
 
             public bool HasVertexUVs { get { return uv != null && uv.Length == vertices.Length; } }
-            public Vector2f GetVertexUV(int i) { return uv[i]; }
+            public Vector2f GetVertexUV(int i) { return uv[i].ToVector2f(); }
 
             public NewVertexInfo GetVertexAll(int i) {
                 return new NewVertexInfo(GetVertex(i),

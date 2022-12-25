@@ -126,7 +126,7 @@ namespace f3
                 return false;
 
 			GameObjectRayHit hitg = null;
-			if (FindGORayIntersection (ray, out hitg)) {
+			if (FindGORayIntersection (ray.ToRay(), out hitg)) {
 				if (hitg.hitGO != null) {
 					hit = new UIRayHit (hitg, this);
 					return true;
@@ -145,7 +145,7 @@ namespace f3
                 return false;
 
             GameObjectRayHit hitg = null;
-            if (FindGORayIntersection(ray, out hitg)) {
+            if (FindGORayIntersection(ray.ToRay(), out hitg)) {
                 if (hitg.hitGO != null) {
                     hit = new UIRayHit(hitg, this);
                     return true;

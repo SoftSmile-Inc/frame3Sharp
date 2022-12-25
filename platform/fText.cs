@@ -76,7 +76,7 @@ namespace f3
         {
             switch (eType) {
                 case TextType.UnityTextMesh:
-                    (text_component as TextMesh).color = color;
+                    (text_component as TextMesh).color = color.ToColor();
                     break;
                 case TextType.TextMeshPro:
 #if G3_ENABLE_TEXT_MESH_PRO || F3_ENABLE_TEXT_MESH_PRO
@@ -92,8 +92,8 @@ namespace f3
             switch (eType) {
                 case TextType.UnityTextMesh: {
                         TextMesh tm = (text_component as TextMesh);
-                        tm.transform.localScale = Vector3f.One;
-                        Vector2f size = UnityUtil.EstimateTextMeshDimensions(tm);
+                        tm.transform.localScale = Vector3.one;
+                        Vector2f size = UnityUtil.EstimateTextMeshDimensions(tm).ToVector2f();
                         float fScaleH = fNewHeight / size.y;
                         tm.transform.localScale = new Vector3(fScaleH, fScaleH, fScaleH);
                         size = new Vector2f(fScaleH * size.x, fNewHeight);

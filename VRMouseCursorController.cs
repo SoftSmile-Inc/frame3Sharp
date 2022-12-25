@@ -23,8 +23,8 @@ namespace f3 {
 
         public Ray3f CurrentCursorWorldRay()
         {
-			Vector3f camPos = CurrentCursorRaySourceWorld;
-			Vector3f cursorPos = CurrentCursorPosWorld;
+			Vector3f camPos = CurrentCursorRaySourceWorld.ToVector3f();
+			Vector3f cursorPos = CurrentCursorPosWorld.ToVector3f();
 			Ray3f ray = new Ray3f(camPos, (cursorPos - camPos).Normalized);
             if (Math.Abs(ray.Direction.LengthSquared - 1) > 0.001f)
                 ray = new Ray3f(camPos, Vector3f.AxisY);
@@ -83,10 +83,10 @@ namespace f3 {
 			vPlaneCursorPos = Vector3.zero;
 			vSceneCursorPos = vPlaneCursorPos;
 
-            CursorDefaultMaterial = MaterialUtil.CreateTransparentMaterial (Color.grey, 0.6f);
+            CursorDefaultMaterial = MaterialUtil.CreateTransparentMaterial (Colorf.Grey, 0.6f);
 			//CursorHitMaterial = MaterialUtil.CreateTransparentMaterial (Color.yellow, 0.8f);
-            CursorHitMaterial = MaterialUtil.CreateStandardMaterial(Color.yellow);
-            CursorCapturingMaterial = MaterialUtil.CreateTransparentMaterial (Color.yellow, 0.75f);
+            CursorHitMaterial = MaterialUtil.CreateStandardMaterial(Colorf.Yellow);
+            CursorCapturingMaterial = MaterialUtil.CreateTransparentMaterial (Colorf.Yellow, 0.75f);
 
 			CursorVisualAngleInDegrees = 1.5f;
 
@@ -105,7 +105,7 @@ namespace f3 {
 			xformObject.SetName("cursor_plane");
             MaterialUtil.DisableShadows(xformObject);
             xformObject.GetComponent<MeshRenderer>().material 
-                = MaterialUtil.CreateTransparentMaterial (Color.cyan, 0.2f);
+                = MaterialUtil.CreateTransparentMaterial (Colorf.Cyan, 0.2f);
             xformObject.GetComponent<MeshRenderer>().enabled = false;
 
             lastMouseEventTime = FPlatform.RealTime();
@@ -146,9 +146,9 @@ namespace f3 {
                 //  local plane coords). So raycast through old cursor to hit new plane and figure
                 //  out new local coords (fCurPlaneX, fCurPlaneY)
                 if (bWasInCaptureFreeze) {
-                    Frame3f newF = new Frame3f(vCursorPlaneOrigin, this.camera.transform.forward);
-                    Vector3 vPlaneHit = newF.RayPlaneIntersection(this.vRaySourcePosition,
-                        (vPlaneCursorPos - vRaySourcePosition).normalized, 2);
+                    Frame3f newF = new Frame3f(vCursorPlaneOrigin.ToVector3f(), this.camera.transform.forward.ToVector3f());
+                    Vector3 vPlaneHit = newF.RayPlaneIntersection(this.vRaySourcePosition.ToVector3f(),
+                        (vPlaneCursorPos - vRaySourcePosition).normalized.ToVector3f(), 2).ToVector3();
                     fCurPlaneX = Vector3.Dot((vPlaneHit - vCursorPlaneOrigin), vCursorPlaneRight);
                     fCurPlaneY = Vector3.Dot((vPlaneHit - vCursorPlaneOrigin), vCursorPlaneUp);
                     bWasInCaptureFreeze = false;
@@ -207,12 +207,12 @@ namespace f3 {
 				Ray r = new Ray (camera.transform.position, (vPlaneCursorPos - camera.transform.position).normalized);
 				AnyRayHit hit = null;
                 if (context.FindAnyRayIntersection(r, out hit)) {
-                    vSceneCursorPos = hit.hitPos;
+                    vSceneCursorPos = hit.hitPos.ToVector3();
                     bHit = true;
                 } else {
                     GameObjectRayHit ghit = null;
-                    if (context.GetScene().FindWorldBoundsHit(r, out ghit)) {
-                        vSceneCursorPos = ghit.hitPos;
+                    if (context.GetScene().FindWorldBoundsHit(r.ToRay3f(), out ghit)) {
+                        vSceneCursorPos = ghit.hitPos.ToVector3();
                         //bIsBoundsHit = true;
                     }
                 }
@@ -242,7 +242,7 @@ namespace f3 {
             Cursor.SetLayer(FPlatform.CursorLayer);
 
             // maintain a consistent visual size for 3D cursor sphere
-            float fScaling = VRUtil.GetVRRadiusForVisualAngle(vSceneCursorPos, camera.transform.position, CursorVisualAngleInDegrees);
+            float fScaling = VRUtil.GetVRRadiusForVisualAngle(vSceneCursorPos.ToVector3f(), camera.transform.position.ToVector3f(), CursorVisualAngleInDegrees);
 			Cursor.transform.localScale = new Vector3 (fScaling, fScaling, fScaling);
 
             // update cursor

@@ -223,12 +223,12 @@ namespace f3
             if (bInAction == false) {
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2)) {
                     curPos2D = new Vector2(0, 0);
-                    rcInfo = new CameraManipulator.RateControlInfo(curPos2D);
+                    rcInfo = new CameraManipulator.RateControlInfo(curPos2D.ToVector2f());
                     bInAction = bUsingMouse = true;
                 } else if (InputExtension.Get.GamepadRightShoulder.Down || InputExtension.Get.GamepadLeftShoulder.Down) {
                     curPos2D = secondPos2D = new Vector2(0, 0);
-                    rcInfo = new CameraManipulator.RateControlInfo(curPos2D);
-                    rcInfo2 = new CameraManipulator.RateControlInfo(secondPos2D);
+                    rcInfo = new CameraManipulator.RateControlInfo(curPos2D.ToVector2f());
+                    rcInfo2 = new CameraManipulator.RateControlInfo(secondPos2D.ToVector2f());
                     bInAction = bUsingGamepad = true;
                 }
             }
@@ -239,11 +239,11 @@ namespace f3
                 curPos2D.y += mouseDelta.y;
 
                 if (Input.GetMouseButton(0)) {
-                    mainCamera.Manipulator().SceneRateControlledFly(scene, mainCamera, curPos2D, rcInfo);
+                    mainCamera.Manipulator().SceneRateControlledFly(scene, mainCamera, curPos2D.ToVector2f(), rcInfo);
                 } else if (Input.GetMouseButton(1)) {
-                    mainCamera.Manipulator().SceneRateControlledZoom(scene, mainCamera, curPos2D, rcInfo);
+                    mainCamera.Manipulator().SceneRateControlledZoom(scene, mainCamera, curPos2D.ToVector2f(), rcInfo);
                 } else if (Input.GetMouseButton(2)) {
-                    mainCamera.Manipulator().SceneRateControlledEgogentricPan(scene, mainCamera, curPos2D, rcInfo);
+                    mainCamera.Manipulator().SceneRateControlledEgogentricPan(scene, mainCamera, curPos2D.ToVector2f(), rcInfo);
                 }
             }
 
@@ -270,12 +270,12 @@ namespace f3
                 secondPos2D.y = Mathf.Lerp(secondPos2D.y, 0, use_t * Time.deltaTime);
 
                 if (InputExtension.Get.GamepadRightShoulder.Down) {
-                    mainCamera.Manipulator().SceneRateControlledZoom(scene, mainCamera, curPos2D, rcInfo);
+                    mainCamera.Manipulator().SceneRateControlledZoom(scene, mainCamera, curPos2D.ToVector2f(), rcInfo);
                     secondPos2D[0] = 0;
-                    mainCamera.Manipulator().SceneRateControlledEgogentricPan(scene, mainCamera, secondPos2D, rcInfo2);
+                    mainCamera.Manipulator().SceneRateControlledEgogentricPan(scene, mainCamera, secondPos2D.ToVector2f(), rcInfo2);
                 } else if (InputExtension.Get.GamepadLeftShoulder.Down) {
-                    mainCamera.Manipulator().SceneRateControlledFly(scene, mainCamera, curPos2D, rcInfo);
-                    mainCamera.Manipulator().SceneRateControlledEgogentricPan(scene, mainCamera, secondPos2D, rcInfo2);
+                    mainCamera.Manipulator().SceneRateControlledFly(scene, mainCamera, curPos2D.ToVector2f(), rcInfo);
+                    mainCamera.Manipulator().SceneRateControlledEgogentricPan(scene, mainCamera, secondPos2D.ToVector2f(), rcInfo2);
                 }
 
             }

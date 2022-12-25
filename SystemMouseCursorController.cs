@@ -41,8 +41,8 @@ namespace f3 {
 		public void Update ()
         {
             // just convert current system mouse position into ray
-            CurrentWorldRay = ((Camera)context.ActiveCamera).ScreenPointToRay(Input.mousePosition);
-            CurrentUIRay = ((Camera)context.OrthoUICamera).ScreenPointToRay(Input.mousePosition);
+            CurrentWorldRay = ((Camera)context.ActiveCamera).ScreenPointToRay(Input.mousePosition).ToRay3f();
+            CurrentUIRay = ((Camera)context.OrthoUICamera).ScreenPointToRay(Input.mousePosition).ToRay3f();
         }
 
 

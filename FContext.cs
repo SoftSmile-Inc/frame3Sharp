@@ -913,7 +913,7 @@ namespace f3 {
                 Scene.SetSceneScale(1.0f);
                 ActiveCamera.Manipulator().ResetSceneOrbit(Scene, true, true, true);
                 // [RMS] above should already do this, but sometimes it gets confused..
-                Scene.RootGameObject.SetRotation(Quaternion.identity);
+                Scene.RootGameObject.SetRotation(Quaternionf.Identity);
                 ActiveCamera.Manipulator().ResetScenePosition(scene);
                 ActiveCamera.Manipulator().SceneTranslate(Scene, SceneGraphConfig.InitialSceneTranslate, true);
             };
@@ -986,11 +986,11 @@ namespace f3 {
 			UIRayHit sceneHit = null, cockpitHit = null;
 
             bool bCockpitOnly = (options.EnableCockpit && activeCockpit.GrabFocus);
-			if (bCockpitOnly == false && scene.FindUIRayIntersection(eyeRay, out sceneHit) ) {
+			if (bCockpitOnly == false && scene.FindUIRayIntersection(eyeRay.ToRay3f(), out sceneHit) ) {
 				bestHit = sceneHit;
 			}
 			if ( Use2DCockpit == false && options.EnableCockpit 
-                && activeCockpit.FindUIRayIntersection(eyeRay, out cockpitHit) ) {
+                && activeCockpit.FindUIRayIntersection(eyeRay.ToRay3f(), out cockpitHit) ) {
 				    if ( cockpitHit.fHitDist < bestHit.fHitDist )
 					    bestHit = cockpitHit;
 			}
@@ -1004,11 +1004,11 @@ namespace f3 {
             UIRayHit sceneHit = null, cockpitHit = null;
 
             bool bCockpitOnly = (options.EnableCockpit && activeCockpit.GrabFocus);
-            if (bCockpitOnly == false && scene.FindUIHoverRayIntersection(eyeRay, out sceneHit)) {
+            if (bCockpitOnly == false && scene.FindUIHoverRayIntersection(eyeRay.ToRay3f(), out sceneHit)) {
                 bestHit = sceneHit;
             }
             if ( Use2DCockpit == false && options.EnableCockpit 
-                && activeCockpit.FindUIHoverRayIntersection(eyeRay, out cockpitHit)) {
+                && activeCockpit.FindUIHoverRayIntersection(eyeRay.ToRay3f(), out cockpitHit)) {
                     if (cockpitHit.fHitDist < bestHit.fHitDist)
                         bestHit = cockpitHit;
             }
@@ -1026,11 +1026,11 @@ namespace f3 {
 
             bool bCockpitOnly = (options.EnableCockpit && activeCockpit.GrabFocus);
 
-            if (bCockpitOnly == false && scene.FindAnyRayIntersection (eyeRay, out sceneHit)) {
+            if (bCockpitOnly == false && scene.FindAnyRayIntersection (eyeRay.ToRay3f(), out sceneHit)) {
 				anyHit = sceneHit;
 			}
 			if (Use2DCockpit == false && options.EnableCockpit 
-                && activeCockpit.FindUIRayIntersection (eyeRay, out cockpitHit)) {
+                && activeCockpit.FindUIRayIntersection (eyeRay.ToRay3f(), out cockpitHit)) {
 				    if (cockpitHit.fHitDist < anyHit.fHitDist)
 					    anyHit = new AnyRayHit(cockpitHit);
 			}

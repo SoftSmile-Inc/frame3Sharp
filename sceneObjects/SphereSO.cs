@@ -66,9 +66,9 @@ namespace f3
             //  translate along axis as well...
             Frame3f f = GetLocalFrame(CoordSpace.ObjectCoords);
             float fScale = sphere.transform.localScale[1];
-            f.Origin -= f.FromFrameV(fScale * centerShift);
+            f.Origin -= f.FromFrameV((fScale * centerShift).ToVector3f());
             update_shift();
-            f.Origin += f.FromFrameV(fScale * centerShift);
+            f.Origin += f.FromFrameV((fScale * centerShift).ToVector3f());
             SetLocalFrame(f, CoordSpace.ObjectCoords);
 
             // apparently this is expensive?
@@ -143,7 +143,7 @@ namespace f3
         {
             hit = null;
             GameObjectRayHit hitg = null;
-            if (FindGORayIntersection(ray, out hitg)) {
+            if (FindGORayIntersection(ray.ToRay(), out hitg)) {
                 if (hitg.hitGO != null) {
                     hit = new SORayHit(hitg, this);
 

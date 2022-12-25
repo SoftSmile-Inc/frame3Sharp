@@ -29,8 +29,8 @@ namespace f3
         }
 
         public override Colorf RGBColor {
-            get { return unityMaterial.color; }
-            set { unityMaterial.color = value; }
+            get { return unityMaterial.color.ToColorf(); }
+            set { unityMaterial.color = value.ToColor(); }
         }
 
         public override Texture2D MainTexture

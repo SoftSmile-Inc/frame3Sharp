@@ -196,7 +196,7 @@ namespace f3
         {
             hit = null;
             GameObjectRayHit hitg = null;
-            if (FindGORayIntersection(ray, out hitg)) {
+            if (FindGORayIntersection(ray.ToRay(), out hitg)) {
                 if (hitg.hitGO != null) {
                     hit = new SORayHit(hitg, this);
                     return true;

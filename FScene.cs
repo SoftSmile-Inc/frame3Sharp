@@ -860,7 +860,7 @@ namespace f3
 			hit = null;
 			foreach (var go in this.vBoundsObjects) {
 				GameObjectRayHit myHit = null;
-				if (UnityUtil.FindGORayIntersection (ray, go, out myHit)) {
+				if (UnityUtil.FindGORayIntersection (ray.ToRay(), go, out myHit)) {
 					if (hit == null || myHit.fHitDist < hit.fHitDist)
 						hit = myHit;
 				}
