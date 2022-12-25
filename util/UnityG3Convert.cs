@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace f3
 {
-    public static class g3ToUnityConvert
+    public static class UnityG3Convert
     {
         public static Vector3f ToVector3f(this Vector3 v) => new Vector3f(v.x, v.y, v.z);
 
@@ -44,6 +44,7 @@ namespace f3
         public static Ray ToRay(this Ray3f r) => new Ray(r.Origin.ToVector3(), r.Direction.ToVector3());
 
         public static AxisAlignedBox2f ToAxisAlignedBox2f(this Rect rect) => new AxisAlignedBox2f(rect.min.ToVector2f(), rect.max.ToVector2f());
+        
         public static Rect ToRect(this AxisAlignedBox2f axisAlignedBox)
         {
             Rect ub = new Rect();
@@ -53,6 +54,7 @@ namespace f3
         }
 
         public static AxisAlignedBox3f ToAxisAlignedBox3f(this Bounds bounds) => new AxisAlignedBox3f(bounds.min.ToVector3f(), bounds.max.ToVector3f());
+        
         public static Bounds ToBounds(this AxisAlignedBox3f axisAlignedBox)
         {
             Bounds ub = new Bounds();
