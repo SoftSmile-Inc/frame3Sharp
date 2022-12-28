@@ -181,11 +181,11 @@ namespace f3 {
                     //float fRotationT = 1.0f;
 
                     if (h.SmoothedHandFrame.Origin != Vector3f.Zero) {
-                        Vector3 new_origin = 
-                            Vector3f.Lerp(h.SmoothedHandFrame.Origin, h.AbsoluteHandFrame.Origin, fPositionT).ToVector3();
-                        Quaternion new_rotation =
-                            Quaternionf.Slerp(h.SmoothedHandFrame.Rotation, h.AbsoluteHandFrame.Rotation, fRotationT).ToQuaternion();
-                        h.SmoothedHandFrame = new Frame3f(new_origin.ToVector3f(), new_rotation.ToQuaternionf());
+                        Vector3f new_origin =
+                            Vector3f.Lerp(h.SmoothedHandFrame.Origin, h.AbsoluteHandFrame.Origin, fPositionT);
+                        Quaternionf new_rotation =
+                            Quaternionf.Slerp(h.SmoothedHandFrame.Rotation, h.AbsoluteHandFrame.Rotation, fRotationT);
+                        h.SmoothedHandFrame = new Frame3f(new_origin, new_rotation);
                     } else 
                         h.SmoothedHandFrame = h.AbsoluteHandFrame;
 

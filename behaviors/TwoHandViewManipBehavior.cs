@@ -147,12 +147,12 @@ namespace f3
             bool bHit1 = cockpit.Scene.FindSceneRayIntersection(input.vLeftSpatialWorldRay, out hit1);
             bool bHit2 = cockpit.Scene.FindSceneRayIntersection(input.vRightSpatialWorldRay, out hit2);
             if ( bHit1 && bHit2 ) {
-                Vector3 avg = ((hit1.hitPos + hit2.hitPos) * 0.5f).ToVector3();
-                float d = VRUtil.GetVRRadiusForVisualAngle(avg.ToVector3f(), camFrame.Origin, 2.0f);
+                Vector3f avg = ((hit1.hitPos + hit2.hitPos) * 0.5f);
+                float d = VRUtil.GetVRRadiusForVisualAngle(avg, camFrame.Origin, 2.0f);
                 if ( (hit1.hitPos - hit2.hitPos).Length < d ) {
                     hi.eMode = ActionMode.SetWorldScale;
                     Frame3f centerF = cockpit.Scene.SceneFrame;
-                    centerF.Origin = avg.ToVector3f();
+                    centerF.Origin = avg;
                     Frame3f planeF = new Frame3f(centerF.Origin, camFrame.Z);
                     hi.BeginSetWorldScale(centerF, planeF, 2*d);
                     hi.UpdateSetWorldScale(input.vLeftSpatialWorldRay, input.vRightSpatialWorldRay);
@@ -215,9 +215,9 @@ namespace f3
             // zoom is indicated by moving hands together/apart. But we want to get rid of
             // influence from other gestures (like rotate below) so we project to camera-right axis first.
             Frame3f camFrame = cockpit.ActiveCamera.GetWorldFrame();
-            Vector3 right = camFrame.X.ToVector3();
+            Vector3f right = camFrame.X;
             float fOrig = Vector3f.Dot((hi.rightStartF.Origin - hi.leftStartF.Origin), hi.camRight);
-            float fCur = Vector3f.Dot((input.RightHandFrame.Origin - input.LeftHandFrame.Origin), right.ToVector3f());
+            float fCur = Vector3f.Dot((input.RightHandFrame.Origin - input.LeftHandFrame.Origin), right);
             float deltaZAbs = fCur - fOrig;
             float deltaZ = (hi.bInZoomDeadzone) ? ApplyDeadzone(deltaZAbs, fZoomDeadzoneInM) : deltaZAbs-hi.fZoomShift;
             if (Math.Abs(deltaZ) > 0 && hi.bInZoomDeadzone) {
