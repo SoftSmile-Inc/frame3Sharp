@@ -24,12 +24,12 @@ namespace f3 {
 
         public static Vector3f GetPosition(this UnityEngine.Camera c)
         {
-            return c.gameObject.transform.position;
+            return c.gameObject.transform.position.ToVector3f();
         }
 
         public static Quaternionf GetOrientation(this UnityEngine.Camera c)
         {
-            return c.gameObject.transform.rotation;
+            return c.gameObject.transform.rotation.ToQuaternionf();
         }
     }
 
@@ -54,8 +54,8 @@ namespace f3 {
             ShowTarget = false;
 
             targetGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            visibleMaterial = MaterialUtil.CreateTransparentMaterial(Color.red, 0.8f);
-            hiddenMaterial = MaterialUtil.CreateTransparentMaterial(Color.red, 0.4f);
+            visibleMaterial = MaterialUtil.CreateTransparentMaterial(Colorf.Red, 0.8f);
+            hiddenMaterial = MaterialUtil.CreateTransparentMaterial(Colorf.Red, 0.4f);
             targetGO.GetComponent<MeshRenderer>().material = hiddenMaterial;
             targetGO.SetLayer(FPlatform.WidgetOverlayLayer);
             MaterialUtil.DisableShadows(targetGO);
@@ -64,9 +64,9 @@ namespace f3 {
 
         public void Update()
         {
-            targetGO.transform.position = TargetPoint;
-            float fScaling = VRUtil.GetVRRadiusForVisualAngle(TargetPoint, gameObject.transform.position, SceneGraphConfig.CameraPivotVisualDegrees);
-            targetGO.transform.localScale = fScaling * Vector3f.One; 
+            targetGO.transform.position = TargetPoint.ToVector3();
+            float fScaling = VRUtil.GetVRRadiusForVisualAngle(TargetPoint, gameObject.transform.position.ToVector3f(), SceneGraphConfig.CameraPivotVisualDegrees);
+            targetGO.transform.localScale = fScaling * Vector3.one;
 
             if ( ShowTarget && SceneGraphConfig.EnableVisibleCameraPivot ) {
                 Material setMaterial = hiddenMaterial;
@@ -153,8 +153,8 @@ namespace f3 {
 
             List<Camera> newCameras = new List<Camera>();
 
-            Vector3f mainPos = mainCamera.GetPosition();
-            Quaternionf mainRot = mainCamera.GetRotation();
+            Vector3 mainPos = mainCamera.GetPosition().ToVector3();
+            Quaternion mainRot = mainCamera.GetRotation().ToQuaternion();
 
             // create camera for 3D widgets layer
             widgetCamera = new fCamera( Camera.Instantiate((Camera)mainCamera, mainPos, mainRot) );

@@ -28,8 +28,8 @@ namespace f3
         }
 
         public virtual Colorf color {
-            get { return unityMat.color; }
-            set { unityMat.color = value; }
+            get { return unityMat.color.ToColorf(); }
+            set { unityMat.color = value.ToColor(); }
         }
 
         public virtual Texture mainTexture {
@@ -58,10 +58,10 @@ namespace f3
         }
 
         public virtual void SetVector(string identifier, Vector4f value) {
-            unityMat.SetVector(identifier, value);
+            unityMat.SetVector(identifier, value.ToVector4());
         }
         public virtual Vector4f GetVector(string identifier) {
-            return unityMat.GetVector(identifier);
+            return unityMat.GetVector(identifier).ToVector4f();
         }
 
 
@@ -95,11 +95,11 @@ namespace f3
         }
 
         public override Colorf color {
-            get { return unityMat.color; }
+            get { return unityMat.color.ToColorf(); }
             set {
                 bool alpha_change = (value.a == 1.0f && unityMat.color.a != 1.0f) ||
                                     (value.a != 1.0f && unityMat.color.a == 1.0f);
-                unityMat.color = value;
+                unityMat.color = value.ToColor();
                 if (alpha_change) {
                     DebugUtil.Log(2, "changing alpha to {0}", value.a);
                     if (value.a == 1) {

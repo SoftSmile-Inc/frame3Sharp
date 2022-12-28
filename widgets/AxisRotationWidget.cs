@@ -71,8 +71,8 @@ namespace f3
 			Vector3f dv = planeHitW - rotateFrameW.Origin;
 			int iX = (nRotationAxis + 1) % 3;
 			int iY = (nRotationAxis + 2) % 3;
-			float fX = Vector3.Dot( dv, rotateFrameW.GetAxis(iX) );
-			float fY = Vector3.Dot( dv, rotateFrameW.GetAxis(iY) );
+			float fX = Vector3f.Dot( dv, rotateFrameW.GetAxis(iX) );
+			float fY = Vector3f.Dot( dv, rotateFrameW.GetAxis(iY) );
 
 			float fNewAngle = (float)Math.Atan2 (fY, fX);
             if (AbsoluteAngleConstraintF != null)
@@ -95,7 +95,7 @@ namespace f3
 
             // construct new frame for target that is rotated around axis
             Vector3f rotateAxisL = rotateFrameL.GetAxis(nRotationAxis);
-			Quaternionf q = Quaternion.AngleAxis(fDeltaAngle * Mathf.Rad2Deg, rotateAxisL );
+			Quaternionf q = Quaternion.AngleAxis(fDeltaAngle * Mathf.Rad2Deg, rotateAxisL.ToVector3() ).ToQuaternionf();
 			Frame3f newFrame = rotateFrameL;
 			newFrame.Rotation = q * newFrame.Rotation;		// order matters here!
 

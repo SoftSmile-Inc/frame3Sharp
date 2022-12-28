@@ -181,8 +181,8 @@ namespace f3
                     if (collider.Raycast(ray, out hitInfo, Mathf.Infinity)) {
                         if (hitInfo.distance < hit.fHitDist) {
                             hit.fHitDist = hitInfo.distance;
-                            hit.hitPos = hitInfo.point;
-                            hit.hitNormal = hitInfo.normal;
+                            hit.hitPos = hitInfo.point.ToVector3f();
+                            hit.hitNormal = hitInfo.normal.ToVector3f();
                             hit.hitGO = go;
                         }
                     }

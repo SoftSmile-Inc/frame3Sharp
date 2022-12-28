@@ -218,9 +218,9 @@ namespace f3
                 NewVertexInfo vi = new NewVertexInfo();
                 vi.bHaveN = WriteNormals; vi.bHaveC = WriteVertexColors; vi.bHaveUV = WriteUVs;
 
-                Vector3f v = vertices[i];
+                Vector3f v = vertices[i].ToVector3f();
                 // local to world
-                v = filter.gameObject.transform.TransformPoint(v);
+                v = filter.gameObject.transform.TransformPoint(v.ToVector3()).ToVector3f();
                 // world back to scene
                 v = scene.ToSceneP(v);
                 vi.v = MeshTransforms.FlipLeftRightCoordSystems(vi.v);
@@ -228,13 +228,13 @@ namespace f3
                 if (WriteNormals) {
                     Vector3 n = normals[i];
                     n = filter.gameObject.transform.TransformDirection(n);  // to world
-                    n = scene.ToSceneN(n);  // to scene
+                    n = scene.ToSceneN(n.ToVector3f()).ToVector3();  // to scene
                     vi.n = MeshTransforms.FlipLeftRightCoordSystems(vi.n);
                 }
                 if (WriteVertexColors)
-                    vi.c = colors[i];
+                    vi.c = colors[i].ToVector3f();
                 if (WriteUVs)
-                    vi.uv = uvs[i];
+                    vi.uv = uvs[i].ToVector2f();
 
                 vertexMap[i] = m.AppendVertex(vi);
             }

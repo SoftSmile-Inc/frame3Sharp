@@ -536,7 +536,7 @@ namespace f3
             eInterMode = InteractionMode.None;
 
             GameObjectRayHit hit;
-            if (! FindGORayIntersection(e.ray, out hit) )
+            if (! FindGORayIntersection(e.ray.ToRay(), out hit) )
                 return false;       // this should not be possible...
             if ( custom_begin_capture(e, hit) ) {
                 eInterMode = InteractionMode.InCustom;

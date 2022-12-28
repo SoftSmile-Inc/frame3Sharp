@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using g3;
 
 namespace f3 {
@@ -11,8 +9,62 @@ namespace f3 {
         public static fMesh MakeUnityMesh(this MeshGenerator gen, bool bRecalcNormals = false, bool bFlipLR = false)
         {
             Mesh m = new Mesh();
-            gen.MakeMesh(m, bRecalcNormals, bFlipLR);
+            MakeMesh(gen, m, bRecalcNormals, bFlipLR);
             return new fMesh(m);
+        }
+
+        /// <summary>
+        /// copy generated mesh data into a Unity Mesh object
+        /// </summary>
+        private static void MakeMesh(MeshGenerator gen, Mesh m, bool bRecalcNormals = false, bool bFlipLR = false)
+        {
+            m.vertices = ToUnityVector3(gen.vertices, bFlipLR);
+            if (gen.uv != null && gen.WantUVs)
+                m.uv = ToUnityVector2(gen.uv);
+            if (gen.normals != null && gen.WantNormals)
+                m.normals = ToUnityVector3(gen.normals, bFlipLR);
+            if (m.vertexCount > 64000 || gen.triangles.Count > 64000)
+                m.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            m.triangles = gen.triangles.array;
+            if (bRecalcNormals)
+                m.RecalculateNormals();
+        }
+
+        private static Vector3[] ToUnityVector3(VectorArray3f a, bool bFlipLR = false)
+        {
+            Vector3[] v = new Vector3[a.Count];
+            float fZSign = (bFlipLR) ? -1 : 1;
+            for (int i = 0; i < a.Count; ++i)
+            {
+                v[i].x = a.array[3 * i];
+                v[i].y = a.array[3 * i + 1];
+                v[i].z = fZSign * a.array[3 * i + 2];
+            }
+            return v;
+        }
+
+        private static Vector3[] ToUnityVector3(VectorArray3d a, bool bFlipLR = false)
+        {
+            Vector3[] v = new Vector3[a.Count];
+            float fZSign = (bFlipLR) ? -1 : 1;
+            for (int i = 0; i < a.Count; ++i)
+            {
+                v[i].x = (float)a.array[3 * i];
+                v[i].y = (float)a.array[3 * i + 1];
+                v[i].z = (float)(fZSign * a.array[3 * i + 2]);
+            }
+            return v;
+        }
+
+        private static Vector2[] ToUnityVector2(VectorArray2f a)
+        {
+            Vector2[] v = new Vector2[a.Count];
+            for (int i = 0; i < a.Count; ++i)
+            {
+                v[i].x = a.array[2 * i];
+                v[i].y = a.array[2 * i + 1];
+            }
+            return v;
         }
     }
 

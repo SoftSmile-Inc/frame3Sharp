@@ -93,9 +93,9 @@ namespace f3
             //  translate along axis as well...
             Frame3f f = GetLocalFrame(CoordSpace.ObjectCoords);
             float fScale = cylinder.transform.localScale[1];
-            f.Origin -= f.FromFrameV(fScale * centerShift);
+            f.Origin -= f.FromFrameV((fScale * centerShift).ToVector3f());
             update_shift();
-            f.Origin += f.FromFrameV(fScale * centerShift);
+            f.Origin += f.FromFrameV((fScale * centerShift).ToVector3f());
             SetLocalFrame(f, CoordSpace.ObjectCoords);
 
             // apparently this is expensive?
@@ -193,17 +193,17 @@ namespace f3
         {
             hit = null;
             GameObjectRayHit hitg = null;
-            if (FindGORayIntersection(ray, out hitg)) {
+            if (FindGORayIntersection(ray.ToRay(), out hitg)) {
                 if (hitg.hitGO != null) {
                     hit = new SORayHit(hitg, this);
 
                     // compute analytic normal on cylinder body
                     if ( hitg.hitGO == body ) {
-                        Vector3 up = this.RootGameObject.GetRotation() * Vector3.up;
-                        Vector3 l = hitg.hitPos - this.RootGameObject.GetPosition();
+                        Vector3 up = this.RootGameObject.GetRotation().ToQuaternion() * Vector3.up;
+                        Vector3 l = (hitg.hitPos - this.RootGameObject.GetPosition()).ToVector3();
                         l -= Vector3.Dot(l, up) * up;
                         l.Normalize();
-                        hit.hitNormal = l;
+                        hit.hitNormal = l.ToVector3f();
                     }
 
                     return true;

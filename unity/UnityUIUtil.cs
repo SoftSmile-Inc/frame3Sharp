@@ -132,7 +132,7 @@ namespace f3
         public static void SetDisabledColor(Button button, Colorf color)
         {
             var newColorBlock = button.colors;
-            newColorBlock.disabledColor = color;
+            newColorBlock.disabledColor = color.ToColor();
             button.colors = newColorBlock;
         }
 
@@ -140,9 +140,9 @@ namespace f3
         public static void SetColors(Button button, Colorf normalColor, Colorf disabledColor)
         {
             var newColorBlock = button.colors;
-            newColorBlock.normalColor = normalColor;
-            newColorBlock.highlightedColor = ColorMixer.Darken(normalColor, 0.9f);
-            newColorBlock.disabledColor = disabledColor;
+            newColorBlock.normalColor = normalColor.ToColor();
+            newColorBlock.highlightedColor = ColorMixer.Darken(normalColor, 0.9f).ToColor();
+            newColorBlock.disabledColor = disabledColor.ToColor();
             button.colors = newColorBlock;
         }
 
@@ -445,20 +445,20 @@ namespace f3
         public static AxisAlignedBox2f GetBounds2D(GameObject go)
         {
             RectTransform rectT = go.GetComponent<RectTransform>();
-            AxisAlignedBox2f box = rectT.rect;
-            box.Translate(rectT.anchoredPosition);
+            AxisAlignedBox2f box = rectT.rect.ToAxisAlignedBox2f();
+            box.Translate(rectT.anchoredPosition.ToVector2f());
             return box;
         }
         public static AxisAlignedBox2f GetBounds2D(RectTransform rectT)
         {
-            AxisAlignedBox2f box = rectT.rect;
-            box.Translate(rectT.anchoredPosition);
+            AxisAlignedBox2f box = rectT.rect.ToAxisAlignedBox2f();
+            box.Translate(rectT.anchoredPosition.ToVector2f());
             return box;
         }
 
         public static void Translate(RectTransform rectT, Vector2f translate)
         {
-            rectT.anchoredPosition = (Vector2f)rectT.anchoredPosition + translate;
+            rectT.anchoredPosition = rectT.anchoredPosition + translate.ToVector2();
         }
 
 
@@ -726,7 +726,7 @@ namespace f3
             Text = "(label)";
             TextAlign = TextAlignment.Center;
             Scale = 0.1f;
-            Translate = new Vector3f(0, 0, 0);
+            Translate = new Vector3(0, 0, 0);
             Color = ColorUtil.make(10, 10, 10);
             ZOffset = -1.0f;
         }
@@ -737,14 +737,14 @@ namespace f3
 
             TextMesh tm = gameObj.AddComponent<TextMesh>();
             tm.text = Text;
-            tm.color = Color;
+            tm.color = Color.ToColor();
             tm.fontSize = 50;
             tm.offsetZ = ZOffset;
             tm.alignment = TextAlign;
 
             // [RMS] this isn't quite right, on the vertical centering...
-            Vector2f size = UnityUtil.EstimateTextMeshDimensions(tm);
-            Vector3 vCenterShift = Vector3f.Zero;
+            Vector2f size = UnityUtil.EstimateTextMeshDimensions(tm).ToVector2f();
+            Vector3 vCenterShift = Vector3.zero;
             if (Align == Alignment.HCenter || Align == Alignment.HVCenter)
                 vCenterShift.x -= size.x * 0.5f;
             if (Align == Alignment.VCenter || Align == Alignment.HVCenter)

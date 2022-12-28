@@ -173,7 +173,7 @@ namespace f3 {
                     Vector3 handPos = VRPlatform.GetLocalControllerPosition(i);
                     Quaternion handRot = VRPlatform.GetLocalControllerRotation(i);
 
-                    h.AbsoluteHandFrame = new Frame3f(rootPos + handPos, handRot);
+                    h.AbsoluteHandFrame = new Frame3f((rootPos + handPos).ToVector3f(), handRot.ToQuaternionf());
 
                     float fPositionT = 0.2f;
                     float fRotationT = 0.2f;
@@ -181,23 +181,23 @@ namespace f3 {
                     //float fRotationT = 1.0f;
 
                     if (h.SmoothedHandFrame.Origin != Vector3f.Zero) {
-                        Vector3 new_origin = 
-                            Vector3.Lerp(h.SmoothedHandFrame.Origin, h.AbsoluteHandFrame.Origin, fPositionT);
-                        Quaternion new_rotation =
-                            Quaternion.Slerp(h.SmoothedHandFrame.Rotation, h.AbsoluteHandFrame.Rotation, fRotationT);
+                        Vector3f new_origin =
+                            Vector3f.Lerp(h.SmoothedHandFrame.Origin, h.AbsoluteHandFrame.Origin, fPositionT);
+                        Quaternionf new_rotation =
+                            Quaternionf.Slerp(h.SmoothedHandFrame.Rotation, h.AbsoluteHandFrame.Rotation, fRotationT);
                         h.SmoothedHandFrame = new Frame3f(new_origin, new_rotation);
                     } else 
                         h.SmoothedHandFrame = h.AbsoluteHandFrame;
 
-                    h.Hand.transform.position = h.SmoothedHandFrame.Origin;
-                    h.Hand.transform.rotation = h.SmoothedHandFrame.Rotation * (Quaternionf)handGeomRotation;
+                    h.Hand.transform.position = h.SmoothedHandFrame.Origin.ToVector3();
+                    h.Hand.transform.rotation = h.SmoothedHandFrame.Rotation.ToQuaternion() * handGeomRotation;
 
-                    h.CursorRay = new Ray(h.SmoothedHandFrame.Origin, 
-                        (h.SmoothedHandFrame.Rotation * Vector3.forward).Normalized );
+                    h.CursorRay = new Ray3f(h.SmoothedHandFrame.Origin, 
+                        (h.SmoothedHandFrame.Rotation * Vector3f.AxisZ).Normalized ).ToRay();
 
                     if (Mathf.Abs(h.CursorRay.direction.sqrMagnitude - 1.0f) > 0.001f) {
                         DebugUtil.Log(2, "SpatialInputController.Update - invlaid cursor ray! rotation was {0}", h.SmoothedHandFrame.Rotation);
-                        h.CursorRay = new Ray(h.SmoothedHandFrame.Origin, Vector3.up);
+                        h.CursorRay = new Ray(h.SmoothedHandFrame.Origin.ToVector3(), Vector3.up);
                     }
 
                     // raycast into scene to see if we hit object, UI, bounds, etc. 
@@ -207,8 +207,8 @@ namespace f3 {
                         // want to hit-test active gizmo first, because that has hit-priority
                         if ( context.TransformManager.HaveActiveGizmo ) {
                             UIRayHit uiHit = null;
-                            if ( context.TransformManager.ActiveGizmo.FindRayIntersection(h.CursorRay, out uiHit) ) {
-                                h.RayHitPos = uiHit.hitPos;
+                            if ( context.TransformManager.ActiveGizmo.FindRayIntersection(h.CursorRay.ToRay3f(), out uiHit) ) {
+                                h.RayHitPos = uiHit.hitPos.ToVector3();
                                 bHit = true;
                                 bHitGizmo = true;
                             }
@@ -217,15 +217,15 @@ namespace f3 {
                         if (bHit == false) {
                             AnyRayHit hit = null;
                             if (context.FindAnyRayIntersection(h.CursorRay, out hit)) {
-                                h.RayHitPos = hit.hitPos;
+                                h.RayHitPos = hit.hitPos.ToVector3();
                                 bHit = true;
                             }
                         }
                         // finally test worldbounds
                         if (bHit == false) { 
                             GameObjectRayHit ghit = null;
-                            if (context.GetScene().FindWorldBoundsHit(h.CursorRay, out ghit)) {
-                                h.RayHitPos = ghit.hitPos;
+                            if (context.GetScene().FindWorldBoundsHit(h.CursorRay.ToRay3f(), out ghit)) {
+                                h.RayHitPos = ghit.hitPos.ToVector3();
                             }
                         }
                     }
@@ -233,8 +233,8 @@ namespace f3 {
                     // if not, plane cursor on view-perp plane centered at last hit pos,
                     // otherwise it will be stuck/disappear
                     if ( bHit == false ) {
-                        Frame3f f = new Frame3f(h.RayHitPos, camera.transform.forward);
-                        h.RayHitPos = f.RayPlaneIntersection(h.CursorRay.origin, h.CursorRay.direction, 2);
+                        Frame3f f = new Frame3f(h.RayHitPos.ToVector3f(), camera.transform.forward.ToVector3f());
+                        h.RayHitPos = f.RayPlaneIntersection(h.CursorRay.origin.ToVector3f(), h.CursorRay.direction.ToVector3f(), 2).ToVector3();
                     }
 
                     h.Cursor.transform.position = h.RayHitPos;
@@ -249,7 +249,7 @@ namespace f3 {
                         MaterialUtil.SetMaterial(h.Cursor, h.CursorDefaultMaterial);
 
                     // maintain a consistent visual size for 3D cursor sphere
-                    float fScaling = VRUtil.GetVRRadiusForVisualAngle(h.RayHitPos, camera.transform.position, CursorVisualAngleInDegrees);
+                    float fScaling = VRUtil.GetVRRadiusForVisualAngle(h.RayHitPos.ToVector3f(), camera.transform.position.ToVector3f(), CursorVisualAngleInDegrees);
                     h.Cursor.transform.localScale = fScaling * Vector3.one;
 
                     // orient cursor so it is tilted like a 2D cursor, but per-hand
@@ -264,7 +264,7 @@ namespace f3 {
                         float hDist = (h.RayHitPos - h.CursorRay.origin).magnitude;
                         Vector3 p0 = h.RayHitPos - 0.9f * hDist * h.CursorRay.direction;
                         Vector3 p1 = h.RayHitPos + 100.0f*h.CursorRay.direction;
-                        float r0 = VRUtil.GetVRRadiusForVisualAngle(p0, camera.transform.position, 0.5f);
+                        float r0 = VRUtil.GetVRRadiusForVisualAngle(p0.ToVector3f(), camera.transform.position.ToVector3f(), 0.5f);
                         h.LaserRen.SetPosition(0, p0);
                         h.LaserRen.SetPosition(1, p1);
                         h.LaserRen.startWidth = h.LaserRen.endWidth = r0;
@@ -304,7 +304,7 @@ namespace f3 {
             }
 
             h.HandIcon = 
-                UnityUtil.CreateMeshGO("hand_icon", m, MaterialUtil.CreateStandardVertexColorMaterial(Color.white), false);
+                UnityUtil.CreateMeshGO("hand_icon", m, MaterialUtil.CreateStandardVertexColorMaterial(Colorf.White), false);
             float s = SceneGraphConfig.VRHandArrowRadius;
             h.HandIcon.transform.localScale = s * 0.3f * Vector3.one;
             h.HandIcon.transform.localPosition = new Vector3(0.0f, -0.3f*s, -0.3f*s);

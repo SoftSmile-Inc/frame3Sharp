@@ -200,7 +200,7 @@ namespace f3
 
         override public bool EndCapture(InputEvent e)
         {
-            if (FindHitGO(e.ray)) {
+            if (FindHitGO(e.ray.ToRay())) {
                 if (EnableClickToDismiss) {
                     Dismiss();
                 } else {

@@ -148,7 +148,7 @@ namespace f3
                     int N = Nc;
                     Vector3[] vec = new Vector3[N];
                     for ( int i = 0; i < N; ++i )
-                        vec[i] = (Vector3)curve[ i % Nc ];
+                        vec[i] = curve[ i % Nc ].ToVector3();
                     ren.positionCount = N;
                     ren.SetPositions(vec);
                     ren.loop = (curve.Closed);

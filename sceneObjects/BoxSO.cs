@@ -75,9 +75,9 @@ namespace f3
             //  translate along axis as well...
             Frame3f f = GetLocalFrame(CoordSpace.ObjectCoords);
             float fScale = box.transform.localScale[0];
-            f.Origin -= f.FromFrameV(fScale * centerShift);
+            f.Origin -= f.FromFrameV((fScale * centerShift).ToVector3f());
             update_shift();
-            f.Origin += f.FromFrameV(fScale * centerShift);
+            f.Origin += f.FromFrameV((fScale * centerShift).ToVector3f());
             SetLocalFrame(f, CoordSpace.ObjectCoords);
 
             // apparently this is expensive?

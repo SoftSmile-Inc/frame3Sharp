@@ -195,7 +195,7 @@ namespace f3
         {
             if (go != null) {
                 Renderer r = go.GetComponent<Renderer>();
-                r.material.color = color;
+                r.material.color = color.ToColor();
             }
         }
 
@@ -240,53 +240,53 @@ namespace f3
 
         public virtual void SetPosition(Vector3f vPosition)
         {
-            go.transform.position = vPosition;
+            go.transform.position = vPosition.ToVector3();
         }
         public virtual Vector3f GetPosition()
         {
-            return go.transform.position;
+            return go.transform.position.ToVector3f();
         }
 
         public virtual void SetRotation(Quaternionf rotation)
         {
-            go.transform.rotation = rotation;
+            go.transform.rotation = rotation.ToQuaternion();
         }
         public virtual Quaternionf GetRotation()
         {
-            return go.transform.rotation;
+            return go.transform.rotation.ToQuaternionf();
         }
 
 
         public virtual void SetLocalPosition(Vector3f vPosition)
         {
-            go.transform.localPosition = vPosition;
+            go.transform.localPosition = vPosition.ToVector3();
         }
         public virtual Vector3f GetLocalPosition()
         {
-            return go.transform.localPosition;
+            return go.transform.localPosition.ToVector3f();
         }
 
         public virtual void SetLocalRotation(Quaternionf rotation)
         {
-            go.transform.localRotation = rotation;
+            go.transform.localRotation = rotation.ToQuaternion();
         }
         public virtual Quaternionf GetLocalRotation()
         {
-            return go.transform.localRotation;
+            return go.transform.localRotation.ToQuaternionf();
         }
 
 
         public virtual void SetLocalScale(Vector3f vScale)
         {
-            go.transform.localScale = vScale;
+            go.transform.localScale = vScale.ToVector3();
         }
         public virtual void SetLocalScale(float fScale)
         {
-            go.transform.localScale = fScale * Vector3f.One; 
+            go.transform.localScale = fScale * Vector3.one;
         }
         public virtual Vector3f GetLocalScale()
         {
-            return go.transform.localScale;
+            return go.transform.localScale.ToVector3f();
         }
 
 
@@ -306,20 +306,20 @@ namespace f3
 
 
         public virtual Vector3f PointToWorld(Vector3f local) {
-            return go.transform.TransformPoint(local);
+            return go.transform.TransformPoint(local.ToVector3()).ToVector3f();
         }
         public virtual Vector3f PointToLocal(Vector3f world) {
-            return go.transform.InverseTransformPoint(world);
+            return go.transform.InverseTransformPoint(world.ToVector3()).ToVector3f();
         }
 
 
         public virtual void RotateD(Vector3f axis, float fAngleDeg)
         {
-            go.transform.Rotate(axis, fAngleDeg);
+            go.transform.Rotate(axis.ToVector3(), fAngleDeg);
         }
         public virtual void RotateAroundD(Vector3f point, Vector3f axis, float fAngleDeg)
         {
-            go.transform.RotateAround(point, axis, fAngleDeg);
+            go.transform.RotateAround(point.ToVector3(), axis.ToVector3(), fAngleDeg);
         }
 
         // 05/09/2017 [RMS] just discovered that transform.Translate() default behavior
@@ -327,7 +327,7 @@ namespace f3
         // Exposed this as parameter, forcing callers to specify it for now.
         public virtual void Translate(Vector3f translation, bool bFrameAxes)
         {
-            go.transform.Translate(translation, bFrameAxes ? Space.Self : Space.World  );
+            go.transform.Translate(translation.ToVector3(), bFrameAxes ? Space.Self : Space.World  );
         }
 
 
@@ -887,10 +887,10 @@ namespace f3
 
         void LateUpdate()
         {
-            this.gameObject.transform.position = TrackGO.GetPosition();
-            this.gameObject.transform.rotation = TrackGO.GetRotation();
+            this.gameObject.transform.position = TrackGO.GetPosition().ToVector3();
+            this.gameObject.transform.rotation = TrackGO.GetRotation().ToQuaternion();
             if (TrackScale)
-                this.gameObject.transform.localScale = TrackGO.GetLocalScale();
+                this.gameObject.transform.localScale = TrackGO.GetLocalScale().ToVector3();
         }
     }
 

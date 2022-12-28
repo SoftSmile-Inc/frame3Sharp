@@ -49,16 +49,16 @@ namespace f3 {
         {
             // just convert current touch position into ray
             if (Input.touchCount > 0) {
-                Vector2f touchPos = Input.touches[0].position;
+                Vector2f touchPos = Input.touches[0].position.ToVector2f();
                 Vector3f touchPos3 = new Vector3f(touchPos.x, touchPos.y, 0);
-                CurrentWorldRay = ((Camera)context.ActiveCamera).ScreenPointToRay(touchPos3);
-                CurrentUIRay = ((Camera)context.OrthoUICamera).ScreenPointToRay(touchPos3);
+                CurrentWorldRay = ((Camera)context.ActiveCamera).ScreenPointToRay(touchPos3.ToVector3()).ToRay3f();
+                CurrentUIRay = ((Camera)context.OrthoUICamera).ScreenPointToRay(touchPos3.ToVector3()).ToRay3f();
             }
             if (Input.touchCount > 1) {
-                Vector2f touchPos = Input.touches[1].position;
+                Vector2f touchPos = Input.touches[1].position.ToVector2f();
                 Vector3f touchPos3 = new Vector3f(touchPos.x, touchPos.y, 0);
                 secondWorldRayValid = true;
-                secondWorldRay = ((Camera)context.ActiveCamera).ScreenPointToRay(touchPos3);
+                secondWorldRay = ((Camera)context.ActiveCamera).ScreenPointToRay(touchPos3.ToVector3()).ToRay3f();
             } else {
                 secondWorldRayValid = false;
             }

@@ -294,16 +294,16 @@ namespace f3
             bRightMenuButtonDown = VRPlatform.RightMenuButtonDown;
             bRightMenuButtonReleased = VRPlatform.RightMenuButtonReleased;
 
-            vLeftStickDelta2D = VRPlatform.LeftStickPosition;
-            vRightStickDelta2D = VRPlatform.RightStickPosition;
+            vLeftStickDelta2D = VRPlatform.LeftStickPosition.ToVector2f();
+            vRightStickDelta2D = VRPlatform.RightStickPosition.ToVector2f();
 
             // [RMS] bit of a hack here, if controller is not active then ray is 0/0, and
             //   that causes lots of exceptions elsewhere! So we return a default ray pointing
             //   straight up, but hopefully clients are checking active flag and will ignore it...
             vLeftSpatialWorldRay = (bLeftControllerActive) ?
-                s.SpatialController.Left.CursorRay : new Ray(Vector3f.Zero, Vector3f.AxisY);
+                s.SpatialController.Left.CursorRay.ToRay3f() : new Ray3f(Vector3f.Zero, Vector3f.AxisY);
             vRightSpatialWorldRay = (bRightControllerActive) ?
-                s.SpatialController.Right.CursorRay : new Ray(Vector3f.Zero, Vector3f.AxisY);
+                s.SpatialController.Right.CursorRay.ToRay3f() : new Ray3f(Vector3f.Zero, Vector3f.AxisY);
 
             LeftHandFrame = s.SpatialController.Left.SmoothedHandFrame;
             RightHandFrame = s.SpatialController.Right.SmoothedHandFrame;
@@ -353,8 +353,8 @@ namespace f3
                 bDown = true;
             }
 
-            pos = t.position;
-            delta = t.deltaPosition;
+            pos = t.position.ToVector2f();
+            delta = t.deltaPosition.ToVector2f();
         }
 
 

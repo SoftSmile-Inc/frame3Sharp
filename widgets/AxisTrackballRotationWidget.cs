@@ -50,8 +50,8 @@ namespace f3
             var radiusVectorOld = startIntersectionPointW - originW;
             var radiusVector = intersectionPointW - originW;
             
-            Debug.DrawLine(originW, startIntersectionPointW, Colorf.Blue);
-            Debug.DrawLine(originW, intersectionPointW, Colorf.Red);
+            Debug.DrawLine(originW.ToVector3(), startIntersectionPointW.ToVector3(), UnityEngine.Color.blue);
+            Debug.DrawLine(originW.ToVector3(), intersectionPointW.ToVector3(), UnityEngine.Color.red);
 
             if (rotateSpeed == 1)
                 return Quaternionf.FromToConstrained(radiusVectorOld, radiusVector, aroundW);

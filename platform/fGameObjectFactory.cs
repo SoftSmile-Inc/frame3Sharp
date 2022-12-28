@@ -279,7 +279,7 @@ namespace f3
             GameObject textGO = new GameObject(sName);
             TextMesh tm = textGO.AddComponent<TextMesh>();
             tm.text = sText;
-            tm.color = textColor;
+            tm.color = textColor.ToColor();
             tm.fontSize = 50;
             tm.offsetZ = fOffsetZ;
             tm.alignment = TextAlignment.Left;
@@ -288,7 +288,7 @@ namespace f3
             // use our textmesh material instead
             MaterialUtil.SetTextMeshDefaultMaterial(tm);
 
-            Vector2f size = UnityUtil.EstimateTextMeshDimensions(tm);
+            Vector2f size = UnityUtil.EstimateTextMeshDimensions(tm).ToVector2f();
             float fScaleH = fTextHeight / size.y;
             tm.transform.localScale = new Vector3(fScaleH, fScaleH, fScaleH);
             float fTextWidth = fScaleH * size.x;

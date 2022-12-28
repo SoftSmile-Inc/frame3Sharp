@@ -28,7 +28,7 @@ namespace f3
         {
             fadeObject = new fGameObject( GameObject.CreatePrimitive(PrimitiveType.Sphere), FGOFlags.NoFlags );
             //fadeObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-            fadeObject.SetMaterial(MaterialUtil.CreateFlatMaterial(Color.black, 0.0f), true);
+            fadeObject.SetMaterial(MaterialUtil.CreateFlatMaterial(Color.black.ToColorf(), 0.0f), true);
             fadeObject.SetName("fade_sphere");
             UnityUtil.ReverseMeshOrientation(fadeObject.GetMesh());
             fadeObject.SetParent(UseCamera.GameObject(), false);
@@ -44,14 +44,14 @@ namespace f3
             // figure out the pan that we would apply to camera, then apply the delta to the scene
             Vector3f curPos = UseCamera.GetPosition();
             Vector3f curDir = UseCamera.GetWorldFrame().Z;
-            float fDist = Vector3.Dot((focusPointW - curPos), curDir);
+            float fDist = Vector3.Dot((focusPointW - curPos).ToVector3(), curDir.ToVector3());
             Vector3f newPos = focusPointW - fDist * curDir;
             Vector3f delta = curPos - newPos;
 
             StartCoroutine(
-                SmoothTranslate(UseScene.RootGameObject.GetPosition() + delta, duration));
+                SmoothTranslate((UseScene.RootGameObject.GetPosition() + delta).ToVector3(), duration));
             StartCoroutine(
-                SmoothMoveTarget(focusPointW + delta, duration / 10.0f));
+                SmoothMoveTarget((focusPointW + delta).ToVector3(), duration / 10.0f));
         }
 
 
@@ -201,9 +201,9 @@ namespace f3
             StartCoroutine(
                 SmoothDipToBlack(0.75f));
             StartCoroutine(
-                SmoothTranslate(UseScene.RootGameObject.GetPosition() + delta, 0.75f));
+                SmoothTranslate((UseScene.RootGameObject.GetPosition() + delta).ToVector3(), 0.75f));
             StartCoroutine(
-                SmoothMoveTarget(vNewTargetLocation+delta, 0.1f));
+                SmoothMoveTarget((vNewTargetLocation+delta).ToVector3(), 0.1f));
         }
 
 
@@ -311,7 +311,7 @@ namespace f3
 
             Action<float> tweenF = (t) => {
                 // update rotation
-                Quaternionf rot = Quaternion.Slerp(startF.Rotation, toOrientation, t);
+                Quaternionf rot = Quaternionf.Slerp(startF.Rotation, toOrientation, t);
                 UseScene.SceneFrame = new Frame3f(startF.Origin, rot);
 
                 // stay on target
@@ -344,7 +344,7 @@ namespace f3
                 Vector3f newTargetS = Vector3f.Lerp(startTargetS, toTargetS, t);
                 UseCamera.Manipulator().PanFocusOnScenePoint(UseScene, UseCamera, newTargetS);
 
-                Quaternionf rot = Quaternion.Slerp(startF.Rotation, toOrientation, t);
+                Quaternionf rot = Quaternionf.Slerp(startF.Rotation, toOrientation, t);
                 UseScene.RootGameObject.SetLocalRotation(rot);
 
                 float curDist = UseCamera.GetPosition().Distance(UseCamera.GetTarget());
@@ -381,7 +381,7 @@ namespace f3
                 Vector3f newTargetS = Vector3f.Lerp(startTargetS, toTargetS, t);
                 UseCamera.Manipulator().PanFocusOnScenePoint(UseScene, UseCamera, newTargetS);
 
-                Quaternionf rot = Quaternion.Slerp(startF.Rotation, toOrientation, t);
+                Quaternionf rot = Quaternionf.Slerp(startF.Rotation, toOrientation, t);
                 UseScene.RootGameObject.SetLocalRotation(rot);
 
                 float curHeight = UseCamera.OrthoHeight;

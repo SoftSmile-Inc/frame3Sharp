@@ -165,7 +165,7 @@ namespace f3
             meshObject.transform.localRotation = Quaternion.identity;
 
             // default unity cylinder is diam=1, height=2
-            meshObject.transform.localScale = new Vector3f(fAbsWidth, fAbsHeight / 2.0f, fAbsDepth);
+            meshObject.transform.localScale = new Vector3(fAbsWidth, fAbsHeight / 2.0f, fAbsDepth);
 
             shiftedFrame = Frame.Translated(Frame.FromFrameV(vShift));
             UnityUtil.SetGameObjectFrame(meshObject, shiftedFrame, CoordSpace.WorldCoords);
@@ -203,7 +203,7 @@ namespace f3
             meshObject.transform.localRotation = Quaternion.identity;
 
             // default unity box is 1x1x1 cube
-            meshObject.transform.localScale = new Vector3f(fAbsWidth, fAbsHeight, fAbsDepth);
+            meshObject.transform.localScale = new Vector3(fAbsWidth, fAbsHeight, fAbsDepth);
 
             shiftedFrame = Frame.Translated(Frame.FromFrameV(vShift));
             UnityUtil.SetGameObjectFrame(meshObject, shiftedFrame, CoordSpace.WorldCoords);
@@ -237,7 +237,7 @@ namespace f3
             meshObject.transform.localRotation = Quaternion.identity;
 
             // default unity sphere is diam=1
-            meshObject.transform.localScale = new Vector3f(fAbsWidth, fAbsWidth, fAbsWidth);
+            meshObject.transform.localScale = new Vector3(fAbsWidth, fAbsWidth, fAbsWidth);
 
             shiftedFrame = Frame.Translated(Frame.FromFrameV(vShift));
             UnityUtil.SetGameObjectFrame(meshObject, shiftedFrame, CoordSpace.WorldCoords);

@@ -25,7 +25,7 @@ namespace f3
                 CaptureSide eSide = (input.bLeftTriggerPressed) ? CaptureSide.Left : CaptureSide.Right;
                 Ray3f useRay = (eSide == CaptureSide.Left) ? input.vLeftSpatialWorldRay : input.vRightSpatialWorldRay;
                 UIRayHit uiHit;
-                if (scene.FindUIHit(useRay, out uiHit)) {
+                if (scene.FindUIHit(useRay.ToRay(), out uiHit)) {
                     bool bCanCapture = uiHit.hitUI.WantsCapture(InputEvent.Spatial(eSide, input, new AnyRayHit(uiHit)));
                     if (bCanCapture)
                         return CaptureRequest.Begin(this, eSide);
@@ -39,7 +39,7 @@ namespace f3
         {
             Ray3f useRay = (eSide == CaptureSide.Left) ? input.vLeftSpatialWorldRay : input.vRightSpatialWorldRay;
             UIRayHit uiHit;
-            if (scene.FindUIHit(useRay, out uiHit)) {
+            if (scene.FindUIHit(useRay.ToRay(), out uiHit)) {
                 bool bCanCapture = uiHit.hitUI.BeginCapture(InputEvent.Spatial(eSide, input, new AnyRayHit(uiHit)));
                 if (bCanCapture) {
                     return Capture.Begin(this, eSide, uiHit.hitUI );
@@ -109,7 +109,7 @@ namespace f3
         public override void UpdateHover(InputState input)
         {
             UIRayHit uiHitL;
-            if ( input.bLeftControllerActive && scene.FindUIHoverHit(input.vLeftSpatialWorldRay, out uiHitL)) {
+            if ( input.bLeftControllerActive && scene.FindUIHoverHit(input.vLeftSpatialWorldRay.ToRay(), out uiHitL)) {
                 if (activeLeftHover != null && activeLeftHover != uiHitL.hitUI)
                     deactivate_hover(input, true);
 
@@ -120,7 +120,7 @@ namespace f3
                 deactivate_hover(input, true);
 
             UIRayHit uiHitR;
-            if (input.bRightControllerActive && scene.FindUIHoverHit(input.vRightSpatialWorldRay, out uiHitR)) {
+            if (input.bRightControllerActive && scene.FindUIHoverHit(input.vRightSpatialWorldRay.ToRay(), out uiHitR)) {
                 if (activeRightHover != null && activeRightHover != uiHitR.hitUI)
                     deactivate_hover(input, false);
 

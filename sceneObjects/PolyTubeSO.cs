@@ -97,8 +97,8 @@ namespace f3
             }
 
             // expand local bounds
-            add_to_bounds( newMesh.bounds.min);
-            add_to_bounds( newMesh.bounds.max);
+            add_to_bounds( newMesh.bounds.min.ToVector3f());
+            add_to_bounds( newMesh.bounds.max.ToVector3f());
         }
 
 
@@ -107,14 +107,14 @@ namespace f3
             hit = null;
 
             Frame3f frameW = GetLocalFrame(CoordSpace.WorldCoords);
-            Ray localRay = frameW.ToFrame(ray);
+            Ray localRay = frameW.ToFrame(ray).ToRay();
 
-            Bounds hitBounds = GetLocalBoundingBox();
+            Bounds hitBounds = GetLocalBoundingBox().ToBounds();
             if (hitBounds.IntersectRay(localRay) == false)
                 return false;
 
             GameObjectRayHit goHit;
-            if ( UnityUtil.FindGORayIntersection(ray, meshGO, out goHit) ) {
+            if ( UnityUtil.FindGORayIntersection(ray.ToRay(), meshGO, out goHit) ) {
                 hit = new SORayHit(goHit, this);
                 return true;
             }

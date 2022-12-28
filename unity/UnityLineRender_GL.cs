@@ -51,7 +51,7 @@ namespace f3
 
         public void OnPostRender()
         {
-            CurrentCameraPos = Camera.main.transform.position;
+            CurrentCameraPos = Camera.main.transform.position.ToVector3f();
 
             GL.PushMatrix();
 
@@ -89,7 +89,7 @@ namespace f3
                 try {
                     Transform transform = ((GameObject)go).transform;
                     GL.MultMatrix(transform.localToWorldMatrix);
-                    Vector3f localCam = transform.InverseTransformPoint(CurrentCameraPos);
+                    Vector3f localCam = transform.InverseTransformPoint(CurrentCameraPos.ToVector3()).ToVector3f();
                     if (lines.WidthType == LineWidthType.Pixel) {
                         if (lines.Width == 1)
                             draw_lines(lines, localCam);
@@ -113,12 +113,12 @@ namespace f3
         {
 
             GL.Begin(GL.LINES);
-            GL.Color(lines.Color);
+            GL.Color(lines.Color.ToColor());
             int NS = lines.Segments.Count;
             for ( int k = 0; k < NS; ++k) {
                 Segment3d seg = lines.Segments[k];
-                GL.Vertex((Vector3)seg.P0);
-                GL.Vertex((Vector3)seg.P1);
+                GL.Vertex(seg.P0.ToVector3());
+                GL.Vertex(seg.P1.ToVector3());
             }
             GL.End();
 
@@ -126,12 +126,12 @@ namespace f3
             for ( int k = 0; k < NC; ++k ) {
                 DCurve3 c = lines.Curves[k];
                 GL.Begin(GL.LINE_STRIP);
-                GL.Color(lines.Color);
+                GL.Color(lines.Color.ToColor());
                 int NV = c.VertexCount;
                 for (int i = 0; i < NV; ++i)
-                    GL.Vertex((Vector3)c[i]);
+                    GL.Vertex(c[i].ToVector3());
                 if (c.Closed)
-                    GL.Vertex((Vector3)c[0]);
+                    GL.Vertex(c[0].ToVector3());
                 GL.End();
             }
         }
@@ -140,7 +140,7 @@ namespace f3
         void draw_quads(LineSet lines, Vector3f cameraPos)
         {
             GL.Begin(GL.QUADS);
-            GL.Color(lines.Color);
+            GL.Color(lines.Color.ToColor());
 
             int NS = lines.Segments.Count;
             for (int k = 0; k < NS; ++k) {
@@ -189,10 +189,10 @@ namespace f3
             Vector3f perp = lineDir.Cross(eyeDir);
             perp.Normalize();
 
-            GL.Vertex(start - width * perp);
-            GL.Vertex(start + width * perp);
-            GL.Vertex(end + width * perp);
-            GL.Vertex(end - width * perp);
+            GL.Vertex((start - width * perp).ToVector3());
+            GL.Vertex((start + width * perp).ToVector3());
+            GL.Vertex((end + width * perp).ToVector3());
+            GL.Vertex((end - width * perp).ToVector3());
         }
 
 
@@ -201,10 +201,10 @@ namespace f3
         {
             Vector3f lineDir = end - start;
             Vector3f perp = lineDir.UnitCross(normal);
-            GL.Vertex(start - width * perp);
-            GL.Vertex(start + width * perp);
-            GL.Vertex(end + width * perp);
-            GL.Vertex(end - width * perp);
+            GL.Vertex((start - width * perp).ToVector3());
+            GL.Vertex((start + width * perp).ToVector3());
+            GL.Vertex((end + width * perp).ToVector3());
+            GL.Vertex((end - width * perp).ToVector3());
         }
 
 

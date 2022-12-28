@@ -26,7 +26,7 @@ namespace f3
         {
             UIRayHit uiHit;
             if (input.bLeftMousePressed) {
-                if (scene.FindUIHit(input.vMouseWorldRay, out uiHit)) {
+                if (scene.FindUIHit(input.vMouseWorldRay.ToRay(), out uiHit)) {
                     bool bCanCapture = uiHit.hitUI.WantsCapture(InputEvent.Mouse(input, new AnyRayHit(uiHit)));
                     if (bCanCapture)
                         return CaptureRequest.Begin(this);
@@ -43,7 +43,7 @@ namespace f3
 
             UIRayHit uiHit;
             if (input.bLeftMousePressed) {
-                if (scene.FindUIHit(input.vMouseWorldRay, out uiHit)) {
+                if (scene.FindUIHit(input.vMouseWorldRay.ToRay(), out uiHit)) {
                     bool bCanCapture = uiHit.hitUI.BeginCapture(InputEvent.Mouse(input, new AnyRayHit(uiHit)));
                     if (bCanCapture) {
                         pCapturing = uiHit.hitUI;
@@ -95,7 +95,7 @@ namespace f3
         public override void UpdateHover(InputState input)
         {
             UIRayHit uiHit;
-            if (scene.FindUIHoverHit(input.vMouseWorldRay, out uiHit)) {
+            if (scene.FindUIHoverHit(input.vMouseWorldRay.ToRay(), out uiHit)) {
                 if (activeHover != null && activeHover != uiHit.hitUI)
                     EndHover(input);
 

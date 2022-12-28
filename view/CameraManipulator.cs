@@ -76,10 +76,10 @@ namespace f3
 
         public void SceneTumbleAround(FScene scene, Vector3f position, float dx, float dy)
         {
-            Vector3 targetPos = Camera.GetTarget();
+            Vector3 targetPos = Camera.GetTarget().ToVector3();
             Camera.SetTarget(position);
             SceneTumble(scene, Camera, dx, dy);
-            Camera.SetTarget(targetPos);
+            Camera.SetTarget(targetPos.ToVector3f());
         }
 
 
@@ -282,7 +282,7 @@ namespace f3
                 // figure out the pan that we would apply to camera, then apply the delta to the scene
                 Vector3f camPosW = camera.GetPosition();
                 Vector3f camForward = camera.Forward();
-                float fDist = Vector3.Dot((focusPointW - camPosW), camForward);
+                float fDist = Vector3f.Dot((focusPointW - camPosW), camForward);
                 Vector3f newCamPosW = focusPointW - fDist * camForward;
                 Vector3f delta = camPosW - newCamPosW;
 
@@ -306,7 +306,7 @@ namespace f3
             // figure out the pan that we would apply to camera, then apply the delta to the scene
             Vector3f camPosW = camera.GetPosition();
             Vector3f camForward = camera.Forward();
-            float fDist = Vector3.Dot((focusPointW - camPosW), camForward);
+            float fDist = Vector3f.Dot((focusPointW - camPosW), camForward);
             if (fDist == 0)
                 fDist = 2.0f * ((Camera)camera).nearClipPlane;
             Vector3f newCamPosW = focusPointW - fDist * camForward;
@@ -399,9 +399,9 @@ namespace f3
             Vector3f forward = camFrame.Z;
             Vector3f up = camFrame.Y;
             if (rc.StayLevel) {
-                forward = new Vector3(forward.x, 0.0f, forward.z);
+                forward = new Vector3f(forward.x, 0.0f, forward.z);
                 forward.Normalize();
-                up = Vector3.up;
+                up = Vector3f.AxisY;
             }
             Vector3f curScenePos = scene.RootGameObject.GetPosition();
             Vector3f newScenePos = curScenePos - dt * rc.curSpeedY * forward;
@@ -429,11 +429,11 @@ namespace f3
             Vector3f forward = camFrame.Z;
             Vector3f up = camFrame.Y;
             if (rc.StayLevel) {
-                forward = new Vector3(forward.x, 0.0f, forward.z);
+                forward = new Vector3f(forward.x, 0.0f, forward.z);
                 forward.Normalize();
-                up = Vector3.up;
+                up = Vector3f.AxisY;
             }
-            Vector3f right = Vector3.Cross(up, forward);
+            Vector3f right = Vector3f.Cross(up, forward);
             Vector3f curScenePos = scene.RootGameObject.GetPosition();
             Vector3f newScenePos = curScenePos - dt * (rc.curSpeedY * forward + rc.curSpeedX * right);
             scene.RootGameObject.SetPosition(newScenePos);
@@ -458,11 +458,11 @@ namespace f3
             Vector3f forward = camFrame.Z;
             Vector3f up = camFrame.Y;
             if (rc.StayLevel) {
-                forward = new Vector3(forward.x, 0.0f, forward.z);
+                forward = new Vector3f(forward.x, 0.0f, forward.z);
                 forward.Normalize();
-                up = Vector3.up;
+                up = Vector3f.AxisY;
             }
-            Vector3f right = Vector3.Cross(up, forward);
+            Vector3f right = Vector3f.Cross(up, forward);
             Vector3f curScenePos = scene.RootGameObject.GetPosition();
             Vector3f newScenePos = curScenePos - dt * (rc.curSpeedY * up + rc.curSpeedX * right);
             scene.RootGameObject.SetPosition(newScenePos);

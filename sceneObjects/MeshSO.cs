@@ -88,8 +88,7 @@ namespace f3
 
         override public AxisAlignedBox3f GetLocalBoundingBox()
         {
-            AxisAlignedBox3f b = (AxisAlignedBox3f)meshGO.GetSharedMesh().bounds;
-            return b;
+            return meshGO.GetSharedMesh().bounds.ToAxisAlignedBox3f();
         }
 
 
@@ -121,7 +120,7 @@ namespace f3
 
             float[] signs = new float[m.vertexCount];
             for ( int i = 0; i < m.vertexCount; ++i ) {
-                Vector3f v = vertices[i];
+                Vector3f v = vertices[i].ToVector3f();
                 signs[i] = (v - f.Origin).Dot(up); 
             }
 
@@ -140,7 +139,7 @@ namespace f3
                 for ( int j = 0; j < 3; ++j ) {
                     ts[j] = signs[t[j]];
                     c += (int)Math.Sign(ts[j]);
-                    tv[j] = vertices[t[j]];
+                    tv[j] = vertices[t[j]].ToVector3f();
                 }
                 if (c == -3 || c == 3)
                     continue;

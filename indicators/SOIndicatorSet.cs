@@ -73,14 +73,14 @@ namespace f3
         {
             float fSceneScale = parentSO.GetScene().GetSceneScale();
             foreach (var i in vObjects) {
-                Vector3f vPos = i.go.transform.position;
+                Vector3f vPos = i.go.transform.position.ToVector3f();
                 float fR = VRUtil.GetVRRadiusForVisualAngle(vPos, cameraPosW, i.fVisualRadiusDeg);
 
                 // have to compensate for scaling of parent SO
                 float fParentSOScale = parentSO.GetLocalScale()[0];
                 fR = fR / fParentSOScale / fSceneScale;
 
-                i.go.transform.localScale = fR * Vector3f.One;
+                i.go.transform.localScale = fR * Vector3.one;
             }
         }
 
@@ -101,9 +101,9 @@ namespace f3
             // assumption is that frames passed in are already in scaled coordinates, 
             // so we need to undo that scale
             if (bIsScaled)
-                go.transform.position = localFrame.Origin / vScale;
+                go.transform.position = (localFrame.Origin / vScale).ToVector3();
             else
-                go.transform.position = localFrame.Origin;
+                go.transform.position = localFrame.Origin.ToVector3();
             go.layer = FPlatform.WidgetOverlayLayer;
 
             UnityUtil.AddChild(parentGO, go, false);

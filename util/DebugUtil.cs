@@ -110,7 +110,7 @@ namespace f3
 			GameObject box = GameObject.CreatePrimitive (PrimitiveType.Cube);
 			box.SetName(name);
 			box.transform.position = center;
-            box.transform.localScale = dims;
+            box.transform.localScale = dims.ToVector3();
 			box.GetComponent<MeshRenderer> ().material.color = color;
 			return box;
 		}
@@ -131,14 +131,14 @@ namespace f3
 
 			GameObject line = new GameObject ();
 			line.SetName(name);
-            line.transform.position = (bIsInWorldPos) ? start : Vector3f.Zero;
+            line.transform.position = (bIsInWorldPos) ? start.ToVector3() : Vector3.zero;
 			line.AddComponent<LineRenderer> ();
 			LineRenderer lr = line.GetComponent<LineRenderer> ();
 			lr.material = MaterialUtil.CreateParticlesMaterial();
-            lr.startColor = lr.endColor = color;
+            lr.startColor = lr.endColor = color.ToColor();
             lr.startWidth = lr.endWidth = diameter;
-			lr.SetPosition (0, start);
-			lr.SetPosition (1, end);
+			lr.SetPosition (0, start.ToVector3());
+			lr.SetPosition (1, end.ToVector3());
 
             if (parent != null) {
                 lr.useWorldSpace = bIsInWorldPos;
@@ -157,15 +157,15 @@ namespace f3
 
             GameObject line = new GameObject();
             line.SetName(name);
-            line.transform.position =  (bIsInWorldPos) ? start : Vector3f.Zero;
+            line.transform.position =  (bIsInWorldPos) ? start.ToVector3() : Vector3.zero;
             line.AddComponent<LineRenderer>();
             LineRenderer lr = line.GetComponent<LineRenderer>();
             lr.material = MaterialUtil.CreateParticlesMaterial();
-            lr.startColor = startColor;
-            lr.endColor = endColor;
+            lr.startColor = startColor.ToColor();
+            lr.endColor = endColor.ToColor();
             lr.startWidth = lr.endWidth = diameter;
-            lr.SetPosition(0, start);
-            lr.SetPosition(1, end);
+            lr.SetPosition(0, start.ToVector3());
+            lr.SetPosition(1, end.ToVector3());
 
             if (parent != null) {
                 lr.useWorldSpace = bIsInWorldPos;
@@ -189,12 +189,12 @@ namespace f3
 			line.AddComponent<LineRenderer> ();
 			LineRenderer lr = line.GetComponent<LineRenderer> ();
 			lr.material = MaterialUtil.CreateParticlesMaterial();
-            lr.startColor = startColor;
-            lr.endColor = endColor;
+            lr.startColor = startColor.ToColor();
+            lr.endColor = endColor.ToColor();
             lr.startWidth = lr.endWidth = diameter;
             Vector3[] verts = new Vector3[curve.Length];
             for (int i = 0; i < curve.Length; ++i)
-                verts[i] = (Vector3)curve[i];
+                verts[i] = ((Vector3f)curve[i]).ToVector3();
             lr.positionCount = curve.Length;
             lr.SetPositions(verts);
             lr.loop = bClosed;
@@ -215,9 +215,9 @@ namespace f3
             }
 
 			GameObject frameObj = new GameObject (name);
-			/*GameObject x = */EmitDebugLine (name+"_x", f.Origin, f.Origin + fAxisLength * f.X, diameter, Color.red, frameObj, false);
-			/*GameObject y = */EmitDebugLine (name+"_y", f.Origin, f.Origin + fAxisLength * f.Y, diameter, Color.green, frameObj, false);
-			/*GameObject z = */EmitDebugLine (name+"_z", f.Origin, f.Origin + fAxisLength * f.Z, diameter, Color.blue, frameObj, false);
+			/*GameObject x = */EmitDebugLine (name+"_x", f.Origin, f.Origin + fAxisLength * f.X, diameter, Colorf.Red, frameObj, false);
+			/*GameObject y = */EmitDebugLine (name+"_y", f.Origin, f.Origin + fAxisLength * f.Y, diameter, Colorf.Green, frameObj, false);
+			/*GameObject z = */EmitDebugLine (name+"_z", f.Origin, f.Origin + fAxisLength * f.Z, diameter, Colorf.Blue, frameObj, false);
             if (parent != null)
                 frameObj.transform.SetParent(parent.transform, false);
             return frameObj;
@@ -268,7 +268,7 @@ namespace f3
                         (FContext.ActiveContext_HACK.MouseCameraController as VRMouseCursorController).CurrentCursorPosWorld;
                 sphere.transform.localScale = new Vector3(diameter, diameter, diameter);
                 sphere.GetComponent<MeshRenderer>().material =
-                    MaterialUtil.CreateTransparentMaterial(color, 0.5f);
+                    MaterialUtil.CreateTransparentMaterial(color.ToVector3f(), 0.5f);
                 MaterialUtil.DisableShadows(sphere);
                 sphere.SetLayer(FPlatform.HUDLayer);
                 return sphere;
@@ -323,7 +323,7 @@ namespace f3
                 Vector3 local_scale = cur.transform.localScale;
 
                 Vector3 pos = cur.transform.position;
-                Vector3f angles = cur.transform.eulerAngles;
+                Vector3f angles = cur.transform.eulerAngles.ToVector3f();
 
                 string s = string.Format("go: {0}   local scale {1} pos {2} angles {3}     POS {4} ANGLES {5}",
                     cur.name, local_scale, local_pos, local_angles, pos, angles);

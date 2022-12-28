@@ -68,8 +68,8 @@ namespace f3
             WedgePadding = 5.0f;
             Radius = 0.5f;
             DeadZoneRadiusFactor = 0.2f;
-            ItemColor = ColorUtil.replaceAlpha(ColorUtil.ForestGreen, 0.8f);
-            HighlightColor = ColorUtil.replaceAlpha(ColorUtil.SelectionGold, 0.9f);
+            ItemColor = ColorUtil.replaceAlpha(ColorUtil.ForestGreen, 0.8f).ToColor();
+            HighlightColor = ColorUtil.replaceAlpha(ColorUtil.SelectionGold, 0.9f).ToColor();
             TextScale = 0.01f;
             TextCenterPointFactor = 0.6f;
 
@@ -113,8 +113,8 @@ namespace f3
         {
             menuContainer = new GameObject(UniqueNames.GetNext("HUDRadialMenu"));
 
-            itemMaterial = MaterialUtil.CreateFlatMaterial(ItemColor);
-            highlightMaterial = MaterialUtil.CreateFlatMaterial(HighlightColor);
+            itemMaterial = MaterialUtil.CreateFlatMaterial(ItemColor.ToColorf());
+            highlightMaterial = MaterialUtil.CreateFlatMaterial(HighlightColor.ToColorf());
 
 
             float fInnerRadius = Radius * DeadZoneRadiusFactor;
@@ -278,7 +278,7 @@ namespace f3
 
         override public bool UpdateCapture(InputEvent e)
         {
-            GameObject hitGO = FindHitGO(e.ray);
+            GameObject hitGO = FindHitGO(e.ray.ToRay());
 
             // find item we want to higlight
             MenuItem highlightItem =  (hitGO == null) ? null : AllItems.Find((x) => x.GO == hitGO);
@@ -315,11 +315,11 @@ namespace f3
 
         override public bool EndCapture(InputEvent e)
         {
-            GameObject hitGO = FindHitGO(e.ray);
+            GameObject hitGO = FindHitGO(e.ray.ToRay());
             if ( hitGO != null) {
 
                 GameObjectRayHit hit;
-                if (FindGORayIntersection(e.ray, out hit)) {
+                if (FindGORayIntersection(e.ray.ToRay(), out hit)) {
                     float fDist = (hit.hitPos - RootGameObject.GetPosition()).Length;
                     if (fDist < Radius * DeadZoneRadiusFactor)
                         return true;
