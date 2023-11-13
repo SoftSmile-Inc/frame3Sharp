@@ -184,7 +184,7 @@ namespace f3
 
         public static void EnableCollider(this GameObject go, bool bEnable = true)
         {
-            MeshCollider c = go.GetComponent<MeshCollider>();
+            Collider c = go.GetComponent<Collider>();
             if (c != null) {
                 if (go.activeSelf == false) {
                     go.SetActive(true);

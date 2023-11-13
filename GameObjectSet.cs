@@ -200,7 +200,7 @@ namespace f3
 
 			bool bHit = false;
 			RaycastHit hitInfo;
-            MeshCollider collider = go.GetComponent<MeshCollider>();
+            Collider collider = go.GetComponent<Collider>();
             if (collider) {
                 go.EnableCollider();
                 if (collider.Raycast(ray, out hitInfo, Mathf.Infinity))
