@@ -519,7 +519,7 @@ namespace f3
         public bool EnableCollisions
         {
             set {
-                MeshCollider c = GetComponent<MeshCollider>();
+                Collider c = GetComponent<Collider>();
                 if (c != null) {
                     if ( base.IsVisible() == false) {
                         base.SetVisible(true);
