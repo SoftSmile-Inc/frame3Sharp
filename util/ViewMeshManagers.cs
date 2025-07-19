@@ -86,11 +86,16 @@ namespace f3
 
         public virtual void InvalidateViewMeshes()
         {
-            if (viewMeshGO != null) {
-                SourceSO.RemoveGO((fGameObject)viewMeshGO);
-                viewMeshGO.Destroy();
+            if (viewMeshGO != null)
+            {
+                SourceSO.RemoveGO(viewMeshGO);
+
+                GameObject.Destroy(viewMeshGO.Mesh);
+                GameObject.Destroy(viewMeshGO);
+
                 viewMeshGO = null;
             }
+
             decomp_valid = false;
         }
 
