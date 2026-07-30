@@ -313,13 +313,13 @@ namespace f3
             return boxLocal.ToAABB();
         }
 
-        public bool FindRayIntersection(Ray3f ray, out SORayHit hit)
+        public bool FindRayIntersection(Ray3f ray, out SORayHit hit, Func<Vector3f, bool> hitPointFilterF = null)
         {
             hit = null;
             if (SelectionMode == SelectionModes.NoSelection)
                 return false;
 
-            bool bHit = SceneUtil.FindNearestRayIntersection(vChildren, ray, out hit);
+            bool bHit = SceneUtil.FindNearestRayIntersection(vChildren, ray, out hit, hitPointFilterF);
             if (bHit && SelectionMode == SelectionModes.SelectGroup )
                 hit.hitSO = this;
             return bHit;

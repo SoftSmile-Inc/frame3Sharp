@@ -210,7 +210,7 @@ namespace f3
         }
 
 
-        override public bool FindRayIntersection(Ray3f worldRay, out SORayHit hit)
+        override public bool FindRayIntersection(Ray3f worldRay, out SORayHit hit, Func<Vector3f, bool> hitPointFilterF = null)
         {
             hit = null;
 
@@ -233,11 +233,15 @@ namespace f3
             // raycast against curve (todo: spatial data structure for this? like 2D polycurve bbox tree?)
             double rayHitT;
             if (CurveUtils.FindClosestRayIntersection(curve, localWidth, localRay, out rayHitT)) {
-                hit = new SORayHit();
                 // transform local hit point back into world coords
                 Vector3f rayPos = localRay.PointAt((float)rayHitT);
                 Vector3f scenePos = SceneTransforms.ObjectToSceneP(this, rayPos);
-                hit.hitPos = SceneTransforms.SceneToWorldP(scene, scenePos);
+                Vector3f worldPos = SceneTransforms.SceneToWorldP(scene, scenePos);
+                if (hitPointFilterF != null && hitPointFilterF(worldPos) == false)
+                    return false;
+
+                hit = new SORayHit();
+                hit.hitPos = worldPos;
                 hit.fHitDist = worldRay.Project(hit.hitPos);
                 hit.hitNormal = Vector3f.Zero;
                 hit.hitGO = root;

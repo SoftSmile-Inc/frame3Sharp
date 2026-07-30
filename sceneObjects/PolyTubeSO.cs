@@ -102,7 +102,7 @@ namespace f3
         }
 
 
-        override public bool FindRayIntersection(Ray3f ray, out SORayHit hit)
+        override public bool FindRayIntersection(Ray3f ray, out SORayHit hit, Func<Vector3f, bool> hitPointFilterF = null)
         {
             hit = null;
 
@@ -115,6 +115,8 @@ namespace f3
 
             GameObjectRayHit goHit;
             if ( UnityUtil.FindGORayIntersection(ray.ToRay(), meshGO, out goHit) ) {
+                if (hitPointFilterF != null && hitPointFilterF(goHit.hitPos) == false)
+                    return false;
                 hit = new SORayHit(goHit, this);
                 return true;
             }
