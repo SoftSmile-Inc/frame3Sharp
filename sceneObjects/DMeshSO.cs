@@ -510,14 +510,12 @@ namespace f3
             Ray3f rayS = scene.ToSceneRay(rayW);
             Ray3d local_ray = SceneTransforms.SceneToObject(this, rayS);
 
-            int hit_tid = (hitPointFilterF == null)
-                ? spatial.FindNearestHitTriangle(local_ray)
-                : find_nearest_accepted_hit_triangle(local_ray,
-                    objectPos => hitPointFilterF(scene.ToWorldP(SceneTransforms.ObjectToSceneP(this, (Vector3f)objectPos))));
+            Func<Vector3d, bool> objectSpaceFilterF = hitPointFilterF == null
+                    ? null
+                    : objectPos => hitPointFilterF(scene.ToWorldP(SceneTransforms.ObjectToSceneP(this, (Vector3f)objectPos)));
+            int hit_tid = find_nearest_accepted_hit_triangle(local_ray, objectSpaceFilterF, out double rayParameter);
             if (hit_tid != DMesh3.InvalidID) {
-                IntrRay3Triangle3 intr = MeshQueries.TriangleIntersection(mesh, hit_tid, local_ray);
-
-                Vector3f hitPos = (Vector3f)local_ray.PointAt(intr.RayParameter);
+                Vector3f hitPos = (Vector3f)local_ray.PointAt(rayParameter);
                 hitPos = SceneTransforms.ObjectToSceneP(this, hitPos);
                 hitPos = scene.ToWorldP(hitPos);
 
@@ -537,25 +535,36 @@ namespace f3
             return false;
         }
 
-        int find_nearest_accepted_hit_triangle(Ray3d local_ray, Func<Vector3d, bool> hitPointFilterF)
+        int find_nearest_accepted_hit_triangle(Ray3d local_ray, Func<Vector3d, bool> hitPointFilterF, out double nearestRayParameter)
         {
+            nearestRayParameter = double.MaxValue;
+            int nearestTriangleId = DMesh3.InvalidID;
+
+            if (hitPointFilterF == null)
+            {
+                nearestTriangleId = spatial.FindNearestHitTriangle(local_ray);
+                if (nearestTriangleId == DMesh3.InvalidID)
+                    return nearestTriangleId;
+
+                IntrRay3Triangle3 intr = MeshQueries.TriangleIntersection(mesh, nearestTriangleId, local_ray);
+                nearestRayParameter = intr.RayParameter;
+                return nearestTriangleId;
+            }
+
             List<int> hitTriangles = new List<int>();
             if (spatial.FindAllHitTriangles(local_ray, hitTriangles) == 0)
                 return DMesh3.InvalidID;
 
-            int nearestTriangleId = DMesh3.InvalidID;
-            double nearestRayParameter = double.MaxValue;
             foreach (int triangleId in hitTriangles)
             {
                 IntrRay3Triangle3 intr = MeshQueries.TriangleIntersection(mesh, triangleId, local_ray);
-                if (intr.RayParameter >= nearestRayParameter)
-                    continue;
-                if (hitPointFilterF(local_ray.PointAt(intr.RayParameter)) == false)
-                    continue;
-
-                nearestRayParameter = intr.RayParameter;
-                nearestTriangleId = triangleId;
+                if (intr.RayParameter < nearestRayParameter && hitPointFilterF(local_ray.PointAt(intr.RayParameter)))
+                {
+                    nearestRayParameter = intr.RayParameter;
+                    nearestTriangleId = triangleId;
+                }
             }
+
             return nearestTriangleId;
         }
 
