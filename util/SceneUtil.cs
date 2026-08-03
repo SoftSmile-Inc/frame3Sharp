@@ -11,24 +11,24 @@ namespace f3
 
 
 
-        public static bool FindNearestRayIntersection(IEnumerable<SceneObject> vSceneObjects, Ray3f ray, out SORayHit hit) {
+        public static bool FindNearestRayIntersection(IEnumerable<SceneObject> vSceneObjects, Ray3f ray, out SORayHit hit, Func<Vector3f, bool> hitPointFilterF = null) {
             hit = null;
             foreach (var so in vSceneObjects) {
                 SORayHit soHit;
-                if (so.FindRayIntersection(ray, out soHit)) {
+                if (so.FindRayIntersection(ray, out soHit, hitPointFilterF)) {
                     if (hit == null || soHit.fHitDist < hit.fHitDist)
                         hit = soHit;
                 }
             }
             return (hit != null);
         }
-        public static bool FindNearestRayIntersection(IEnumerable<SceneObject> vSceneObjects, Func<SceneObject,bool> filter, Ray3f ray, out SORayHit hit)
+        public static bool FindNearestRayIntersection(IEnumerable<SceneObject> vSceneObjects, Func<SceneObject,bool> filter, Ray3f ray, out SORayHit hit, Func<Vector3f, bool> hitPointFilterF = null)
         {
             hit = null;
             foreach (var so in vSceneObjects) {
                 if (filter(so)) {
                     SORayHit soHit;
-                    if (so.FindRayIntersection(ray, out soHit)) {
+                    if (so.FindRayIntersection(ray, out soHit, hitPointFilterF)) {
                         if (hit == null || soHit.fHitDist < hit.fHitDist)
                             hit = soHit;
                     }

@@ -247,7 +247,7 @@ namespace f3
         }
 
 
-        public static bool FindNearestRayIntersection(IEnumerable<SceneObject> vObjects, Ray3f ray, out SORayHit hit, Func<SceneObject,bool> filter = null)
+        public static bool FindNearestRayIntersection(IEnumerable<SceneObject> vObjects, Ray3f ray, out SORayHit hit, Func<SceneObject,bool> filter = null, Func<Vector3f, bool> hitPointFilterF = null)
         {
             hit = null;
 
@@ -255,7 +255,7 @@ namespace f3
                 if (filter != null && filter(so) == false)
                     continue;
                 SORayHit soHit;
-                if (so.FindRayIntersection(ray, out soHit)) {
+                if (so.FindRayIntersection(ray, out soHit, hitPointFilterF)) {
                     if (hit == null || soHit.fHitDist < hit.fHitDist)
                         hit = soHit;
                 }

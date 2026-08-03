@@ -175,7 +175,7 @@ namespace f3
             return (target != null) ? target.GetLocalBoundingBox() : AxisAlignedBox3f.Empty;
         }
 
-        public bool FindRayIntersection(Ray3f ray, out SORayHit hit)
+        public bool FindRayIntersection(Ray3f ray, out SORayHit hit, Func<Vector3f, bool> hitPointFilterF = null)
         {
             hit = null;
             return false;

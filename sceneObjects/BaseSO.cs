@@ -192,11 +192,18 @@ namespace f3
         }
 
 
-        virtual public bool FindRayIntersection(Ray3f ray, out SORayHit hit)
+        protected static Func<UnityEngine.Vector3, bool> ToUnityHitPointFilter(Func<Vector3f, bool> hitPointFilterF)
+        {
+            if (hitPointFilterF == null)
+                return null;
+            return hitPointInWorld => hitPointFilterF(hitPointInWorld.ToVector3f());
+        }
+
+        virtual public bool FindRayIntersection(Ray3f ray, out SORayHit hit, Func<Vector3f, bool> hitPointFilterF = null)
         {
             hit = null;
             GameObjectRayHit hitg = null;
-            if (FindGORayIntersection(ray.ToRay(), out hitg)) {
+            if (FindGORayIntersection(ray.ToRay(), out hitg, null, ToUnityHitPointFilter(hitPointFilterF))) {
                 if (hitg.hitGO != null) {
                     hit = new SORayHit(hitg, this);
                     return true;

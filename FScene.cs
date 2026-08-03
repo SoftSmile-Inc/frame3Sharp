@@ -800,18 +800,18 @@ namespace f3
             return HUDUtil.FindNearestHoverRayIntersection(vUIElements, ray, out hit);
         }
 
-        public bool FindSORayIntersection(Ray3f ray, out SORayHit hit, Func<SceneObject, bool> filter = null) {
+        public bool FindSORayIntersection(Ray3f ray, out SORayHit hit, Func<SceneObject, bool> filter = null, Func<Vector3f, bool> hitPointFilterF = null) {
             return HUDUtil.FindNearestRayIntersection(VisibleSceneObjects, ray, out hit,
-                (SelectionMask == null) ? filter : mask_filter(filter));
+                (SelectionMask == null) ? filter : mask_filter(filter), hitPointFilterF);
         }
 
-        public bool FindSORayIntersection_PivotPriority(Ray3f ray, out SORayHit hit, Func<SceneObject, bool> filter = null)
+        public bool FindSORayIntersection_PivotPriority(Ray3f ray, out SORayHit hit, Func<SceneObject, bool> filter = null, Func<Vector3f, bool> hitPointFilterF = null)
         {
-            bool bHitPivot = HUDUtil.FindNearestRayIntersection(VisibleSceneObjects, ray, out hit, is_priority_pivot);
+            bool bHitPivot = HUDUtil.FindNearestRayIntersection(VisibleSceneObjects, ray, out hit, is_priority_pivot, hitPointFilterF);
             if (bHitPivot)
                 return true;
             return HUDUtil.FindNearestRayIntersection(VisibleSceneObjects, ray, out hit,
-                                (SelectionMask == null) ? filter : mask_filter(filter));
+                                (SelectionMask == null) ? filter : mask_filter(filter), hitPointFilterF);
         }
         protected static bool is_priority_pivot(SceneObject so) {
             return so is PivotSO && (so as PivotSO).IsOverlaySO;
@@ -820,7 +820,7 @@ namespace f3
 
         // does not test bounds!
         // [TODO] this is going to be weird... need to test bounds, I think
-        public bool FindAnyRayIntersection(Ray3f ray, out AnyRayHit hit) {
+        public bool FindAnyRayIntersection(Ray3f ray, out AnyRayHit hit, Func<Vector3f, bool> hitPointFilterF = null) {
 			hit = null;
 
 			UIRayHit bestUIHit = null;
@@ -837,7 +837,7 @@ namespace f3
                 if (!is_selectable(so))
                     continue;
 				SORayHit objHit;
-				if (so.FindRayIntersection (ray, out objHit)) {
+				if (so.FindRayIntersection (ray, out objHit, hitPointFilterF)) {
 					if (bestSOHit == null || objHit.fHitDist < bestSOHit.fHitDist)
 						bestSOHit = objHit;
 				}
@@ -870,14 +870,14 @@ namespace f3
 
 
         // tests SceneObjects and Bounds
-        public bool FindSceneRayIntersection(Ray3f ray, out AnyRayHit hit, bool bFindBoundsHits = true, Func<SceneObject, bool> sofilter = null)
+        public bool FindSceneRayIntersection(Ray3f ray, out AnyRayHit hit, bool bFindBoundsHits = true, Func<SceneObject, bool> sofilter = null, Func<Vector3f, bool> hitPointFilterF = null)
         {
             hit = null;
 
             SORayHit bestSOHit = null;
             GameObjectRayHit bestBoundsHit = null;
 
-            bool bHitSO = FindSORayIntersection(ray, out bestSOHit, sofilter);
+            bool bHitSO = FindSORayIntersection(ray, out bestSOHit, sofilter, hitPointFilterF);
             bool bHitBounds = bFindBoundsHits && FindWorldBoundsHit(ray, out bestBoundsHit);
             if ( bHitSO && bHitBounds ) {
                 if ( bestSOHit.fHitDist < bestBoundsHit.fHitDist )

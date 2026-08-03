@@ -95,7 +95,7 @@ namespace f3
         // called on per-frame Update()
         void PreRender();
 
-		bool FindRayIntersection(Ray3f ray, out SORayHit hit);
+		bool FindRayIntersection(Ray3f ray, out SORayHit hit, Func<Vector3f, bool> hitPointFilterF = null);
 
 
         /// <summary> Return local bounding box transformed into requested space </summary>

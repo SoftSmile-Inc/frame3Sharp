@@ -158,7 +158,7 @@ namespace f3
         }
 
 
-		public virtual bool FindGORayIntersection (Ray ray, out GameObjectRayHit hit, Func<GameObject, bool> FilterF = null)
+		public virtual bool FindGORayIntersection (Ray ray, out GameObjectRayHit hit, Func<GameObject, bool> FilterF = null, Func<Vector3, bool> hitPointFilterF = null)
 		{
 			hit = new GameObjectRayHit();
 			RaycastHit hitInfo;
@@ -179,7 +179,8 @@ namespace f3
                 if (collider) {
                     go.EnableCollider();
                     if (collider.Raycast(ray, out hitInfo, Mathf.Infinity)) {
-                        if (hitInfo.distance < hit.fHitDist) {
+                        if (hitInfo.distance < hit.fHitDist
+                            && (hitPointFilterF == null || hitPointFilterF(hitInfo.point))) {
                             hit.fHitDist = hitInfo.distance;
                             hit.hitPos = hitInfo.point.ToVector3f();
                             hit.hitNormal = hitInfo.normal.ToVector3f();
